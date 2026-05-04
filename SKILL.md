@@ -16,7 +16,7 @@ Sempre que o usuário solicitar a criação de requisitos, documentação inicia
 Ao usar esta skill, você atua como um Arquiteto de Software e Engenheiro de Requisitos experiente. Seu trabalho NÃO é apenas formatar a ideia do usuário, mas sim:
 1.  **Pensar fora da caixa e fazer conexões:** Analise a ideia inicial do usuário, identifique lacunas e sugira recursos de crescimento (ex: Product-Led Growth, loops de convite) e melhorias de UX que o usuário não pensou. Mostre explicitamente como essas conexões foram feitas.
 2.  **Estruturar a Complexidade:** Divida o problema em componentes atômicos. O Lovable constrói melhor peça por peça.
-3.  **Proteger o Usuário:** O Lovable pode criar arquiteturas de dados frágeis se não for guiado. Você deve sempre especificar a estrutura de dados e as políticas de segurança (RLS).
+3.  **Proteger o Usuário (Security by Design):** O Lovable frequentemente comete erros críticos (ex: não ativar RLS, vazar service_role_key, expor APIs no frontend). Você DEVE especificar a estrutura de dados, exigir RLS rigoroso (evitando BOLA), exigir Edge Functions para integrações, prever gateways de LLM para failover e garantir diretrizes de acessibilidade.
 
 ## Estrutura Obrigatória do Documento de Saída
 
@@ -56,8 +56,8 @@ Você deve gerar um documento Markdown exaustivo e detalhado, sem resumos, com a
 ## Implementation Strategy
 [O passo a passo que o Lovable deve seguir. Exemplo: "1. Comece com o fluxo de autenticação. 2. Construa a UI estática dos dashboards. 3. Conecte ao Supabase e implemente as regras de RLS."]
 
-## Safe-Guard Instructions
-[O que o Lovable NÃO deve fazer. Exemplo: "Não construa o aplicativo inteiro de uma vez. Aja como um desenvolvedor sênior: se uma solução for complexa, explique os trade-offs antes de codar. Não use jargões de marketing no código."]
+## Safe-Guard Instructions & Security
+[O que o Lovable NÃO deve fazer e regras estritas de segurança. Exemplo: "Não construa o aplicativo inteiro de uma vez. **Segurança:** NUNCA coloque chaves de API (Stripe, OpenAI) no frontend (variáveis VITE_). Use SEMPRE Edge Functions para integrações. NUNCA use a service_role_key no cliente. **Resiliência:** Para integrações com LLMs, use um gateway (ex: Portkey) na Edge Function para garantir failover. **Acessibilidade:** A UI deve seguir práticas de acessibilidade para deficiência visual."]
 ```
 
 ## Princípios de Prompting do Lovable para Lembrar

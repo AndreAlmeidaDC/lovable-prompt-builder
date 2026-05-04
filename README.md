@@ -54,3 +54,4 @@ A skill força a geração de prompts na seguinte estrutura:
 ---
 *Histórico de Alterações:*
 - *[2026-04-30 14:40] - Criação do repositório inicial com README, framework de prompting e exemplo de output.*
+- *[2026-05-04 15:20] - Atualização da skill e exemplos para incluir diretrizes estritas de segurança (OWASP BOLA, RLS, proteção de segredos), failover de LLMs e acessibilidade.*

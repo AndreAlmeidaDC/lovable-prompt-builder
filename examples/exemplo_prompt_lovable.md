@@ -46,10 +46,13 @@ A aplicação deve ser responsiva, mas focada na experiência desktop/tablet par
 4. Conecte ao Supabase e implemente as regras de RLS (crucial para o multi-tenant).
 5. Adicione a lógica de cálculo do Dashboard baseada na tabela de `movements`.
 
-## Safe-Guard Instructions
-- Aja como um desenvolvedor sênior pragmático. Não construa o aplicativo inteiro de uma vez. Comece APENAS pelo layout base e a Tabela de Produtos.
+## Safe-Guard Instructions & Security
+- Aja como um desenvolvedor sênior pragmático e focado em segurança (Security by Design). Não construa o aplicativo inteiro de uma vez. Comece APENAS pelo layout base e a Tabela de Produtos.
 - Não tente implementar integrações complexas de ERP ou emissão de nota fiscal. O foco é apenas controle de quantidade.
-- Certifique-se de que todas as queries de banco de dados filtrem pelo `store_id` para evitar vazamento de dados entre lojas.
+- **Segurança de Dados:** O RLS (Row Level Security) DEVE estar ativado em todas as tabelas para evitar ataques de BOLA (Broken Object Level Authorization). NUNCA consulte a tabela `auth.users` diretamente no frontend.
+- **Segredos e APIs:** NUNCA armazene chaves de API (como chaves de LLM ou Stripe) no frontend (ex: `VITE_API_KEY`). Use EXCLUSIVAMENTE Edge Functions para lidar com credenciais. NUNCA inicialize o cliente Supabase no React usando a `service_role_key`.
+- **Acessibilidade:** A UI deve seguir práticas de acessibilidade (WCAG), incluindo contraste adequado e suporte a leitores de tela para deficiência visual.
+- **Resiliência (Failover):** Se houver qualquer integração com LLMs, a Edge Function DEVE utilizar um gateway de LLM (como Portkey ou Helicone) para garantir failover e roteamento dinâmico.
 
 ---
 *Histórico de Alterações:*
