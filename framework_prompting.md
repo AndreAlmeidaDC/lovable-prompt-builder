@@ -1,65 +1,286 @@
-# Framework de Prompting para Lovable.dev
+# Framework de Prompting para Lovable.dev — v2.0
 
-Este documento consolida as melhores práticas, estruturas de prompts e padrões descobertos na documentação oficial do Lovable, no Lovable Prompting Bible e em exemplos validados pela comunidade. O objetivo é servir como base para a criação de uma skill reutilizável.
+*Autor: André Almeida*
 
-## 1. Princípios Fundamentais do Lovable
+Este documento consolida as melhores práticas e padrões de prompting para o Lovable.dev, baseado na documentação oficial, comunidade e descobertas da skill `lovable-prompt-builder`. Ele descreve como estruturar requisitos, fazer iterações com feedback do Lovable e entregar produtos em produção.
 
-O Lovable é uma plataforma de desenvolvimento assistido por IA (AI-assisted development platform) focada em construir aplicações web completas (full-stack). Para extrair o máximo valor da ferramenta, alguns princípios são essenciais:
+---
 
-*   **Atomicidade (Build by component):** Não peça para construir a aplicação inteira de uma vez. Comece pelo layout principal, depois adicione componentes individuais (ex: "Agora construa apenas o modal de upload de imagem").
-*   **Separação de Preocupações (UI vs Data):** O Lovable é excelente em UI, mas pode ser ingênuo em arquitetura de dados. Defina explicitamente a estrutura do banco de dados (ex: esquemas Supabase, RLS, foreign keys) antes de pedir para a IA conectar a UI aos dados.
-*   **Contexto é Rei:** A IA precisa entender *o que* está construindo, *para quem* e *por quê*. Forneça contexto de negócio, não apenas instruções técnicas.
-*   **Uso de Knowledge Files (.lovable):** Para projetos complexos, é fundamental fornecer documentação de design system, esquemas de banco de dados ou regras de negócio através do upload de arquivos `.lovable` ou PDFs/Markdown.
-*   **Diretividade (No Autopilot):** Evite jargões corporativos ("robusto", "inovador", "perfeito"). Seja direto sobre o que deseja. Se algo for complexo, peça para a IA explicar as compensações (trade-offs).
+## 1. Princípios Fundamentais
 
-## 2. Estrutura Ideal de um Prompt (O Padrão Ouro)
+**Atomicidade (Build by component):** Nunca peça para construir tudo de uma vez. Comece pelo layout, depois componentes individuais. O Lovable quebra com escopo demais.
 
-Analisando mais de 100 templates da comunidade e a documentação oficial, o padrão ouro para um prompt inicial (Project Kickoff) no Lovable segue uma estrutura rigorosa baseada em Markdown:
+**Separação de preocupações (UI vs Data):** UI é forte. Dados e segurança precisam de direção explícita. Defina schema, RLS e integrações externas no kickoff.
 
-### Seções Recomendadas:
+**Contexto é rei:** A IA precisa saber O QUE está construindo, PARA QUEM e POR QUÊ. Contexto de negócio e restrições são fundamentais.
 
-1.  **# Context (Contexto):** O que é o produto, qual o problema que resolve e quem é o usuário final.
-2.  **## Tech Stack (Stack Tecnológico):** Definição clara das tecnologias (ex: React, TypeScript, Tailwind CSS, shadcn/ui, Supabase).
-3.  **## Core Features (Recursos Principais - Ordem de Prioridade):** Lista numerada dos recursos essenciais (MVP). A priorização é crucial para a IA entender o que focar primeiro.
-4.  **## Visual Style (Estilo Visual):** Diretrizes de design, paleta de cores, tipografia, referências visuais e componentes de UI preferidos.
-5.  **## Technical Requirements (Requisitos Técnicos):** Regras de arquitetura, responsividade, acessibilidade, tratamento de erros, performance e limites.
-6.  **## Implementation Strategy (Estratégia de Implementação):** O passo a passo que a IA deve seguir. (ex: "1. Construa a UI estática primeiro. 2. Adicione os estados locais. 3. Conecte ao banco de dados").
-7.  **## Safe-Guard Instructions (Instruções de Segurança/Limites):** O que a IA *não* deve fazer, como tratar falhas, validações de segurança e restrições de escopo.
+**Branding desde o início:** Cores, fontes e tom visual devem ser tokens Tailwind definidos globalmente no primeiro prompt. Nunca hardcoded.
 
-## 3. Comandos Essenciais (Workflow)
+**Security by design:** RLS, Edge Functions, sem secrets no frontend — não são passos finais, são requisitos de cada componente.
 
-Para interagir com o Lovable de forma iterativa, os seguintes comandos provaram ser altamente eficazes:
+**Feedback loop obrigatório:** Cada prompt entregue depende do sucesso do anterior. Sem exceções.
 
-*   **O Comando de Clarificação:**
-    `"Antes de escrever qualquer código, faça-me 3 perguntas esclarecedoras sobre [feature]. Foque em: estrutura de dados, fluxo do usuário e edge cases."`
-    *Por que funciona:* Impede a IA de fazer suposições erradas e forçar retrabalhos massivos.
+---
 
-*   **O Comando de Mock de Banco de Dados:**
-    `"Crie a UI para isso usando dados mockados por enquanto. Ao mesmo tempo, escreva o SQL exato do Supabase para a tabela que lidará com isso, incluindo tipos corretos, RLS policies e relacionamentos de foreign keys."`
-    *Por que funciona:* Separa a complexidade visual da complexidade de dados.
+## 2. O Fluxo em 4 Fases
 
-*   **O Comando de Atuação (Roleplay com Restrições):**
-    `"Aja como um fundador solo técnico com orçamento zero para serviços enterprise. Não sugira integrações caras ou arquiteturas excessivamente complexas."`
-    *Por que funciona:* Calibra o nível de sofisticação das soluções propostas.
+### FASE 1 — Escopo, Badge, LGPD e Concorrentes
 
-*   **O Teste ELI5 (Explain Like I'm 5):**
-    `"Explique esse fluxo de usuário para mim como se eu fosse um adolescente que nunca usou um SaaS antes. Se for difícil de explicar, simplifique o fluxo antes de codar."`
-    *Por que funciona:* Valida a UX antes de investir tempo em código.
+Pergunte:
+1. Público-alvo? (consumidor / B2B / interno)
+2. Monetização?
+3. Offline ou PWA?
+4. Múltiplos idiomas?
+5. Multi-tenant (B2B)?
+6. Badge do Lovable — remover?
+7. Usuários menores de 18?
+8. Dados sensíveis?
+9. Serviços de terceiros fora do Brasil?
 
-## 4. O Workflow de Produção (A Realidade)
+Output: Nível de compliance LGPD definido (Básico / Intermediário / Avançado).
 
-Segundo a comunidade (ex: Reddit), o Lovable é um "laboratório de UI" incrível, mas não necessariamente a plataforma final para produção em escala sem intervenção. O workflow recomendado para fundadores é:
+### FASE 2 — Branding
 
-1.  **Lovable:** Prototipagem rápida de UI, validação da ideia, construção do frontend estático e lógica básica (70% do trabalho em 10% do tempo).
-2.  **GitHub:** Exportação do código e controle de versão (proteção da branch principal).
-3.  **Cursor + MCP:** Clonar o repositório localmente e usar o Cursor IDE (com Model Context Protocol) para refinar o código, adicionar tratamento de erros robusto, otimizar integrações (Stripe, Supabase) e preparar para produção (os 30% finais).
+Pergunte:
+- Tem identidade visual existente?
+- URLs de inspiração (até 3)?
+- Tom visual (minimalista / bold / corporativo / lúdico)?
+- Dark mode?
+- Referências negativas?
 
-## 5. Diretrizes para a Skill (lovable-prompt-builder)
+Output: Bloco completo de tokens Tailwind, tipografia, radius, dark mode, componentes shadcn.
 
-A skill a ser criada deve atuar como um engenheiro de requisitos experiente. Quando o usuário pedir "Gere os requisitos para um app de X", a skill deve:
+```
+CONFIGURAÇÃO DE TEMA — [Projeto]
 
-1.  **Pensar fora da caixa:** Não aceitar a ideia básica do usuário passivamente. Fazer conexões, sugerir recursos de crescimento (PLG - Product-Led Growth) e melhorias de UX.
-2.  **Gerar o Documento Completo:** Produzir um arquivo Markdown completo seguindo a estrutura de 7 seções (Context, Tech Stack, Core Features, Visual Style, Technical Requirements, Implementation Strategy, Safe-Guard Instructions).
-3.  **Injetar as Melhores Práticas:** Garantir que o documento instrua o Lovable a construir componentes de forma atômica e priorize a UI antes do backend.
-4.  **Autoria:** O documento gerado deve ter a autoria atribuída a André Almeida.
-5.  **Exaustividade:** O documento deve ser exaustivo, detalhado e pronto para ser copiado e colado no Lovable.
+Cores (tokens Tailwind):
+  primary:     #[hex]
+  secondary:   #[hex]
+  accent:      #[hex]
+  background:  #[hex]
+  foreground:  #[hex]
+  muted:       #[hex]
+  border:      #[hex]
+  destructive: #[hex]
+
+Tipografia:
+  font-sans:    [família]
+  font-display: [família]
+
+Border radius:
+  --radius: [valor]rem
+
+Dark mode: [sim / não / toggle]
+
+Componentes shadcn: [lista]
+
+Tom visual: [descrição]
+```
+
+### FASE 3 — Validação
+
+Apresente resumo:
+- O que faz, quem usa
+- Top 5 features do MVP
+- Pensamento lateral (PLG, retenção)
+- Backlog imediato
+- Diferenciais competitivos
+- Nível LGPD
+- Branding resumido
+
+Aguarde confirmação EXPLÍCITA.
+
+### FASE 4 — Execução Iterativa
+
+Entregue prompts UM POR UM. Para cada um:
+
+```
+Próximo passo: Cole este prompt no Lovable e retorne o resultado.
+- "OK / funcionou" — avanço
+- Texto do erro — analiso e corrijo
+- "Funcionou mas errado" — ajusto
+```
+
+Após cada retorno:
+- **Sucesso:** Próximo prompt
+- **Erro:** Prompt de correção com diagnóstico
+- **Parcial:** Anota ou corrige agora?
+
+Último prompt: Google Search Console setup.
+
+---
+
+## 3. Estrutura Ideal do Kickoff
+
+```
+# [Nome] — Lovable Kickoff Prompt
+
+*Autor: André Almeida*
+
+## Context
+[Produto, problema, usuário, conexões de negócio]
+
+## Competitive Edge
+[2-3 diferenciais concretos]
+
+## Tech Stack
+React + TypeScript + Tailwind + shadcn/ui
+Supabase (Auth, Database, Storage, Edge Functions)
+PostHog (Analytics)
+Sentry (Error Monitoring)
+Resend (Email)
+[Stripe — se monetização]
+
+## Branding & Visual Identity
+[Bloco completo de tokens Tailwind gerado na Fase 2]
+
+## Core Features — Priority Order
+1. **[Feature 1]:** [comportamento esperado]
+2. **[Feature 2]:** [comportamento esperado]
+...
+
+## Onboarding & Empty States
+[Fluxo de primeiro acesso, ações sugeridas]
+
+## SEO, GEO & Discoverabilidade
+
+### SEO
+- HTML semântico (h1 único, landmark roles)
+- Metadata dinâmica por rota
+- Open Graph + Twitter Cards
+- Sitemap.xml automático
+- robots.txt com regras explícitas
+- Imagens com lazy loading e alt text
+- Core Web Vitals: LCP < 2.5s / CLS < 0.1 / INP < 200ms
+- Dynamic OG images por rota
+
+### GEO — Generative Engine Optimization
+- /public/llms.txt (descrição para AI crawlers)
+- /public/ai-summary.md (resumo estruturado do produto)
+- Meta description 150-300 chars, otimizada para AI
+- JSON-LD / Schema.org: WebSite + WebPage + específico por tipo
+- HTML que converte bem para markdown
+- /blog, /changelog, /docs indexáveis
+
+### Checklist Auditoria SEO/GEO (Lovable nativo)
+Todos devem passar antes de encerrar:
+- [ ] Homepage heading and structure
+- [ ] Google Search Console configurado
+- [ ] Crawler rules (robots.txt)
+- [ ] Sitemap submetido ao GSC
+- [ ] AI summary (/ai-summary.md + meta description)
+- [ ] Core Web Vitals OK
+- [ ] Schema para rich results
+- [ ] Page metadata por rota
+- [ ] Social previews (Open Graph)
+- [ ] Acessibilidade (WCAG AA)
+- [ ] Mobile-friendly
+- [ ] Indexabilidade confirmada
+
+## Technical Requirements & Database Architecture
+
+### Banco de Dados
+[Tabelas com campos, tipos e relações]
+
+### Segurança (sem exceção)
+- RLS em TODAS as tabelas
+- Políticas RLS explícitas: SELECT, INSERT, UPDATE, DELETE
+- Proteção contra BOLA — OWASP
+- NUNCA service_role_key no cliente
+- NUNCA secrets em variáveis VITE_
+- SEMPRE Edge Functions para integrações externas
+- Rate limiting nas Edge Functions críticas
+- Gateway de LLM (ex: Portkey) para failover
+
+### Compliance LGPD — Nível [Básico / Intermediário / Avançado]
+
+**Básico:**
+Cookie consent, política, termos, exportação de dados, exclusão de conta, audit log
+
+**Intermediário:**
+Tudo + cookie consent granular, página de direitos do titular, canal DPO com prazo 15 dias, base legal por tipo de dado, transferência internacional, retenção de dados, gate de idade
+
+**Avançado:**
+Tudo + RIPD, consentimento específico por dado sensível, notificação de incidentes 72h, DPO designado
+
+## Monetização [se aplicável]
+- Stripe com webhooks via Edge Function
+- Página de pricing com planos diferenciados
+- Upgrade wall nos recursos premium
+- Portal do cliente para gerenciar assinatura
+
+## Notificações & Comunicação
+- In-app com preferências por usuário
+- Email transacional via Resend
+- [Push via PWA — se definido]
+
+## Admin Panel
+- Rota /admin protegida por role admin no RLS
+- Visão de usuários, métricas, gestão de conteúdo
+
+## Implementation Strategy
+1. Fluxo de autenticação completo
+2. Layout base com branding aplicado globalmente
+3. [Feature 1 do core]
+...
+N-2. LGPD: cookie consent, políticas, página de direitos
+N-1. SEO/GEO: metadata, JSON-LD, sitemap, llms.txt, ai-summary.md
+N.   Analytics (PostHog) + Error Monitoring (Sentry)
+[Se badge]: CSS para ocultar #lovable-badge
+
+## Safe-Guard Instructions
+- NÃO construa tudo de uma vez
+- NÃO use service_role_key no cliente
+- NÃO use secrets em variáveis VITE_
+- NÃO crie tabelas sem RLS ativado
+- NÃO ignore empty states e error states
+- NÃO avance sem o passo anterior funcionando
+- NÃO use cores hardcoded — sempre tokens Tailwind
+- NÃO aplique branding de forma parcial
+```
+
+---
+
+## 4. Workflow de Produção
+
+Lovable é excelente para prototipagem (70% do trabalho em 10% do tempo). Para produção:
+
+1. **Lovable:** Construir UI, lógica básica, validar ideia
+2. **GitHub:** Exportar código, controle de versão
+3. **Cursor + MCP:** Refinar código, robustez, otimizar integrações (30% final)
+4. **Google Search Console:** Configurar após deploy em produção
+
+---
+
+## 5. Comandos Essenciais
+
+**Clarificação:** "Antes de codar, faça 3 perguntas sobre [feature]: estrutura de dados, fluxo do usuário, edge cases."
+
+**Mock vs Schema:** "Crie a UI com dados mockados. Simultaneamente, defina o SQL exato do Supabase com tipos, RLS policies e foreign keys."
+
+**Restrição de Escopo:** "Aja como fundador solo com orçamento zero. Sem soluções enterprise complexas."
+
+**Teste ELI5:** "Explique esse fluxo como para um adolescente novo em SaaS. Se for difícil, simplifique antes de codar."
+
+---
+
+## 6. Checklist Pré-Deploy
+
+- [ ] RLS ativado em todas as tabelas sensíveis
+- [ ] Frontend inspecionado: sem SERVICE_ROLE, sem secrets VITE_
+- [ ] APIs de terceiros só via Edge Functions
+- [ ] Tabela auth.users não exposta no frontend
+- [ ] Acessibilidade WCAG AA
+- [ ] Testes de penetração executados (ex: Aikido Security)
+- [ ] LGPD checklist concluído (nível apropriado)
+- [ ] Badge do Lovable removido (se acordado)
+- [ ] Google Search Console configurado
+- [ ] Checklist SEO/GEO do Lovable passando em todos os itens
+- [ ] Rate limiting nas Edge Functions críticas
+
+---
+
+*Histórico:*
+- *v1.0 — Princípios e estrutura de prompt*
+- *v2.0 (2026-05-15) — 4 fases, branding, GEO, LGPD, feedback loop, checklist SEO/GEO do Lovable*
+
