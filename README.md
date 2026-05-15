@@ -1,57 +1,133 @@
-# Lovable Prompt Builder Skill
+# Lovable Prompt Builder
 
-*Autor: André Almeida*
+> Skill para guiar o desenvolvimento de produtos no Lovable.dev do zero ao deploy — prompt por prompt, com feedback em tempo real.
 
-Um repositório contendo a skill **Lovable Prompt Builder**, projetada para ser utilizada por agentes de IA (como o Manus) para gerar documentos de requisitos e prompts otimizados para a plataforma [Lovable.dev](https://lovable.dev/).
+*Autor: André Almeida — [Comunidade AI Brasil](https://linkedin.com/in/andrealmeidadc)*
 
-## O Problema
+---
 
-O Lovable é uma ferramenta incrível para desenvolvimento full-stack assistido por IA, mas ele sofre do problema clássico de "garbage in, garbage out". Se você pedir para ele "criar um app de gestão de estoque", ele fará suposições sobre a arquitetura de dados, muitas vezes resultando em bancos de dados frágeis (sem Row Level Security - RLS) e interfaces confusas.
+## O Problema que Esta Skill Resolve
 
-O Lovable funciona melhor quando:
-1. Recebe instruções atômicas (construir componente por componente).
-2. Tem uma separação clara entre a complexidade da UI e a arquitetura de dados (exigindo schemas Supabase explícitos).
-3. Recebe contexto de negócio e restrições claras (ex: "não use soluções enterprise caras").
+O Lovable.dev é uma plataforma poderosa de desenvolvimento full-stack com IA. Mas ele sofre de um problema clássico: **garbage in, garbage out**.
 
-## A Solução (Esta Skill)
+Peça para ele "criar um app de gestão de estoque" e ele vai:
+- Fazer suposições erradas sobre a arquitetura de dados
+- Criar tabelas sem Row Level Security (RLS) — uma vulnerabilidade crítica
+- Ignorar onboarding, estados vazios e tratamento de erro
+- Esquecer SEO, analytics e compliance desde o início
+- Construir tudo de uma vez e quebrar no meio do caminho
 
-A skill `lovable-prompt-builder` atua como um Arquiteto de Software e Engenheiro de Requisitos. Quando ativada, ela pega uma ideia simples do usuário e:
+Esta skill resolve isso atuando como um **Arquiteto de Software Sênior** que guia o usuário em todo o processo.
 
-1. **Aplica Pensamento Lateral:** Adiciona conexões de negócio, como loops de Product-Led Growth (PLG) e melhorias de UX.
-2. **Estrutura a Complexidade:** Divide a ideia em *Core Features* priorizadas e *Technical Requirements*.
-3. **Protege a Arquitetura:** Define o schema de banco de dados mockado e regras de segurança (RLS) que o Lovable deve seguir rigorosamente.
-4. **Gera o Prompt de Kickoff:** Entrega um documento Markdown padronizado, pronto para ser copiado e colado no Lovable.
+---
+
+## Como Funciona
+
+```
+Ideia do usuário
+      |
+      v
+Fase 1: Perguntas de escopo + pesquisa de concorrentes
+      |
+      v
+Fase 2: Validação do entendimento (aguarda confirmação)
+      |
+      v
+Fase 3: Prompt 1 entregue ao usuário
+      |
+      v
+Usuário cola no Lovable e retorna o resultado
+      |
+   Sucesso ──────> Próximo prompt
+      |
+   Erro ─────────> Prompt de correção ──> Retoma fila
+      |
+   Parcial ──────> Anota ou corrige agora
+      |
+      v
+Repete até produto completo
+```
+
+---
+
+## O que a Skill Cobre
+
+### Processo
+- Coleta de requisitos com perguntas de escopo antes de gerar qualquer coisa
+- Pesquisa de concorrentes e análise de diferenciação
+- Validação do entendimento antes de gerar o kickoff
+- Entrega atômica: um prompt por vez, nunca dois ao mesmo tempo
+- Loop de feedback: sucesso, erro técnico ou sucesso parcial — cada um tratado diferente
+
+### Produto Gerado
+- Stack definida: React + TypeScript + Tailwind + shadcn/ui + Supabase
+- Segurança by design: RLS em todas as tabelas, proteção OWASP BOLA, Edge Functions para secrets
+- SEO clássico: metadata dinâmica, Open Graph, JSON-LD/Schema.org, sitemap.xml, robots.txt
+- GEO (Generative Engine Optimization): HTML semântico, llms.txt, Core Web Vitals < threshold
+- Analytics desde o dia 1: PostHog para product intelligence, Sentry para erros
+- LGPD: cookie consent, exportação de dados, exclusão de conta, audit log
+- Onboarding e empty states explícitos — o Lovable nunca gera isso sozinho
+- Admin panel com roles separados desde o schema
+- Monetização via Stripe com webhooks em Edge Functions
+- Email transacional via Resend
+- Dynamic OG images por rota
+- Content architecture: /blog, /changelog, /docs para SEO e GEO de longo prazo
+
+---
 
 ## Conteúdo do Repositório
 
-Este repositório é focado na aplicação prática e contém:
+```
+lovable-prompt-builder/
+├── SKILL.md                    # Arquivo principal — lido pelo agente de IA
+├── README.md                   # Este arquivo
+├── framework_prompting.md      # Princípios e workflow Lovable → GitHub → Cursor
+├── security-checklist.md       # Checklist de segurança para revisão pós-build
+└── examples/
+    └── exemplo_prompt_lovable.md  # Exemplo de output gerado pela skill
+```
 
-- `SKILL.md`: O arquivo principal da skill que deve ser lido pelo agente de IA. Contém as instruções de como o agente deve se comportar e a estrutura obrigatória do documento de saída.
-- `framework_prompting.md`: Um documento consolidado com os princípios fundamentais, estrutura ideal de prompts e o workflow de produção (Lovable → GitHub → Cursor) descobertos na documentação oficial e na comunidade.
-- `examples/exemplo_prompt_lovable.md`: Um exemplo prático e genérico (Sistema de Gestão de Inventário B2B) de como o output gerado pela skill se parece.
+---
 
 ## Como Usar
 
-Se você estiver usando o Manus ou outro agente compatível com skills:
+### Com qualquer agente de IA (Manus, Claude, GPT, Gemini)
 
-1. Forneça o arquivo `SKILL.md` ao agente.
-2. Dê o comando: *"Gere os requisitos para o Lovable de um aplicativo de [sua ideia]"*.
-3. O agente analisará a ideia, expandirá com pensamento lateral e gerará o documento de kickoff estruturado.
-4. Copie a seção indicada no documento gerado e cole no chat inicial do Lovable.dev.
+1. Forneça o conteúdo do `SKILL.md` ao agente no início da conversa
+2. Diga: *"Quero criar um aplicativo de [sua ideia]. Siga a skill."*
+3. O agente vai fazer perguntas de escopo, pesquisar concorrentes e validar o entendimento antes de gerar qualquer coisa
+4. Após a validação, ele entrega os prompts um por um
+5. Você cola cada prompt no Lovable e retorna o resultado para o agente
+6. O agente processa o feedback e avança ou corrige
 
-## O Padrão Ouro de Prompts para Lovable
+### Com Claude (recomendado)
 
-A skill força a geração de prompts na seguinte estrutura:
-
-1. **Context:** O que é o produto e quem é o usuário final.
-2. **Tech Stack:** Definição clara das tecnologias (React, Tailwind, Supabase, etc).
-3. **Core Features (Priority Order):** Lista numerada dos recursos essenciais do MVP.
-4. **Visual Style:** Diretrizes de design e componentes de UI preferidos.
-5. **Technical Requirements & Database Architecture:** Especificação de tabelas, tipos e RLS policies.
-6. **Implementation Strategy:** O passo a passo que a IA deve seguir.
-7. **Safe-Guard Instructions:** O que a IA *não* deve fazer.
+Adicione o `SKILL.md` como contexto num Project do Claude para que ele esteja sempre disponível sem precisar reenviar.
 
 ---
-*Histórico de Alterações:*
-- *[2026-04-30 14:40] - Criação do repositório inicial com README, framework de prompting e exemplo de output.*
-- *[2026-05-04 15:20] - Atualização da skill e exemplos para incluir diretrizes estritas de segurança (OWASP BOLA, RLS, proteção de segredos), failover de LLMs e acessibilidade.*
+
+## Princípios Fundamentais
+
+**Atomicidade** — Um prompt, uma responsabilidade. O Lovable constrói melhor peça por peça.
+
+**Dados antes de UI** — O schema do banco e as regras de RLS são definidos no kickoff e não mudam sem revisão explícita.
+
+**Security by Design** — Segurança não é um passo final. É requisito de cada componente.
+
+**Feedback Loop** — Nenhum prompt novo sem confirmação do anterior. Sem exceção.
+
+**Discoverabilidade** — Todo produto gerado deve ser encontrável por humanos (SEO) e por AI crawlers (GEO) desde o primeiro deploy.
+
+---
+
+## Histórico de Alterações
+
+- **2026-04-30** — Criação do repositório inicial com README, framework de prompting e exemplo de output
+- **2026-05-04** — Segurança OWASP BOLA, RLS obrigatório, proteção de segredos, failover de LLMs e acessibilidade
+- **2026-05-15** — Refatoração completa: fluxo interativo guiado, loop de feedback do Lovable, GEO/SEO, llms.txt, Core Web Vitals, PostHog, Sentry, LGPD, onboarding, monetização Stripe, admin panel, notificações, content architecture, competitive research, audit log, export de dados, dynamic OG images, rate limiting e Resend
+
+---
+
+## Licença
+
+MIT — use, modifique e distribua livremente com atribuição.
