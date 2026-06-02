@@ -1,0 +1,32 @@
+{
+  "name": "lovable-prompt-builder",
+  "title": "Lovable Prompt Builder",
+  "description": "Skill para gerar requisitos e prompts sequenciais para construir aplicações no Lovable.dev.",
+  "version": "2026.06.02",
+  "maturity": "stable",
+  "origin_url": "https://github.com/AndreAlmeidaDC/lovable-prompt-builder",
+  "origin_git_url": "https://github.com/AndreAlmeidaDC/lovable-prompt-builder.git",
+  "default_branch": "main",
+  "author": "André Almeida",
+  "license": "MIT",
+  "last_standardized_at": "2026-06-02 09:02 GMT-3",
+  "required_files": [
+    "SKILL.md",
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "GOVERNANCE.md",
+    "metadata.json",
+    "references/version-check.md",
+    "examples/"
+  ],
+  "update_policy": {
+    "check_upstream_on_meaningful_use": true,
+    "read_upstream_readme": true,
+    "read_upstream_changelog": true,
+    "summarize_changes_before_update": true,
+    "requires_user_consent": true,
+    "silent_self_update_allowed": false,
+    "overwrite_local_changes_allowed_without_consent": false
+  }
+}

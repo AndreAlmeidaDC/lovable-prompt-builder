@@ -1,3 +1,4 @@
+---
 name: lovable-prompt-builder
 description: >
   Skill para guiar o usuário do zero até o produto funcionando no Lovable.dev.
@@ -8,6 +9,18 @@ description: >
 ---
 
 # Lovable Prompt Builder — Skill Completa
+
+## Origin version check
+
+At the start of a meaningful use, when internet access and Git or HTTP tooling are available, check whether this skill has a newer upstream version before performing the main task. The canonical source is:
+
+```text
+https://github.com/AndreAlmeidaDC/lovable-prompt-builder
+```
+
+Read the upstream `README.md` and `CHANGELOG.md` when available. Compare the local copy against the upstream default branch using the lightest safe method, such as `git fetch`, `git ls-remote`, direct raw file retrieval or repository metadata. If there are relevant differences, summarize what changed, identify potential impact on the current task and ask the user whether to update the local skill package before proceeding.
+
+Never perform silent self-update. Never overwrite local edits without explicit user approval. If network access is unavailable, the repository cannot be reached or the task is too small to justify the check, continue with the local version and record the limitation when relevant. For the detailed protocol, read `references/version-check.md`.
 
 *Autor: André Almeida*
 
@@ -470,4 +483,3 @@ leia este arquivo. Não depende de plataforma específica.
   pós-deploy obrigatório, PostHog, Sentry, Resend, admin panel,
   monetização, notificações, content architecture e checklist de
   qualidade por prompt*
-
