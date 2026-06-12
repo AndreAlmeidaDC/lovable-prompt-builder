@@ -6,6 +6,7 @@ description: >
   sessão de branding, valida entendimento, gera prompts atômicos sequenciais,
   processa feedback de cada etapa e ajusta o plano em tempo real. Use quando o
   usuário quiser criar qualquer aplicativo web ou SaaS usando o Lovable.
+license: MIT
 ---
 
 # Lovable Prompt Builder — Skill Completa
