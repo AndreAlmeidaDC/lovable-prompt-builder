@@ -9,7 +9,7 @@ The skill may check whether a newer upstream version exists, read the public doc
 ## Canonical source
 
 ```text
-https://github.com/AndreAlmeidaDC/lovable-prompt-builder
+https://github.com/AndreAlmeidaDC/harness-engineering-coding-agent
 ```
 
 Default branch: `main`
@@ -41,13 +41,13 @@ Use the first method that works in the current environment, in this order:
 1. Plain HTTPS retrieval of the upstream `metadata.json`. Works in any environment with HTTP access and does not require Git:
 
 ```text
-https://raw.githubusercontent.com/AndreAlmeidaDC/lovable-prompt-builder/main/metadata.json
+https://raw.githubusercontent.com/AndreAlmeidaDC/harness-engineering-coding-agent/main/metadata.json
 ```
 
 2. GitHub API for the latest commit on the default branch:
 
 ```text
-https://api.github.com/repos/AndreAlmeidaDC/lovable-prompt-builder/commits/main
+https://api.github.com/repos/AndreAlmeidaDC/harness-engineering-coding-agent/commits/main
 ```
 
 3. `git ls-remote` when Git is available and only the remote commit hash is needed.

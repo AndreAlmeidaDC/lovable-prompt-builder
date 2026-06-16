@@ -1,4 +1,4 @@
-
-# Python local cache
+*.bak
+*.pyc
 __pycache__/
-*.py[cod]
+.DS_Store

@@ -1,14 +1,14 @@
 {
   "name": "lovable-prompt-builder",
-  "title": "Lovable Prompt Builder",
-  "description": "Skill para gerar requisitos e prompts sequenciais para construir aplicações no Lovable.dev.",
-  "version": "2026.06.11",
-  "maturity": "stable",
+  "version": "2026.06.16",
+  "last_standardized_at": "2026.06.16 GMT-3",
+  "description": "Vibecode skill for building full-stack web apps with Lovable.dev. Guides the user through intake, branding, LGPD compliance and atomic prompt generation with feedback loop.",
+  "license": "MIT",
   "origin_url": "https://github.com/AndreAlmeidaDC/lovable-prompt-builder",
   "origin_git_url": "https://github.com/AndreAlmeidaDC/lovable-prompt-builder.git",
-  "default_branch": "main",
-  "author": "André Almeida",
-  "license": "MIT",
+  "family": "vibecode-prompt-builder",
+  "platform": "Lovable",
+  "update_policy": "version-check.md",
   "declared_capabilities": {
     "network_egress": {
       "expected": false,
@@ -22,25 +22,5 @@
       "expected": false,
       "reason": "No package installation."
     }
-  },
-  "last_standardized_at": "2026-06-11 GMT-3",
-  "required_files": [
-    "SKILL.md",
-    "README.md",
-    "CHANGELOG.md",
-    "CONTRIBUTING.md",
-    "GOVERNANCE.md",
-    "metadata.json",
-    "references/version-check.md",
-    "examples/"
-  ],
-  "update_policy": {
-    "check_upstream_on_meaningful_use": true,
-    "read_upstream_readme": true,
-    "read_upstream_changelog": true,
-    "summarize_changes_before_update": true,
-    "requires_user_consent": true,
-    "silent_self_update_allowed": false,
-    "overwrite_local_changes_allowed_without_consent": false
   }
 }
