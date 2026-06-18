@@ -130,7 +130,7 @@ scripts/
   validate_skill.py               # Validação local da skill
 ```
 
-## Por que existem 5 skills e não uma só
+## Por que existem 6 skills e não uma só
 
 Essa pergunta é legítima — o processo de fundo (especificar antes de gerar, modelar
 dados, iterar de forma atômica, reancorar quando a IA perde o contexto) é o mesmo em
@@ -138,32 +138,33 @@ todas as plataformas. Seria tentador fazer uma skill única que cobre tudo.
 
 Não fizemos, por três razões:
 
-**1. Contexto desperdiçado.** Uma skill única carregaria as particularidades de 5
-plataformas em toda sessão, sendo que você só usa uma. 80% do que entrasse no contexto
-seria ruído para a sua tarefa. Skills separadas carregam só o que importa para a
-plataforma que você escolheu.
+**1. Contexto desperdiçado.** Uma skill única carregaria as particularidades de seis
+plataformas em toda sessão, sendo que você só usa uma. A maior parte do que entrasse no
+contexto seria ruído para a sua tarefa. Skills separadas carregam só o que importa para
+a plataforma que você escolheu.
 
 **2. As plataformas divergem mais do que parecem.** O v0 gera componentes, não apps.
 O a0.dev fala de telas e navegação, não de páginas e rotas. O Base44 não te dá o código.
-Espremer tudo num fluxo único exigiria tantos "se for plataforma X, faça Y" que o
-resultado seria confuso e frágil.
+O emergent usa MongoDB e um time de agentes; os outros não. Espremer tudo num fluxo único
+exigiria tantos "se for plataforma X, faça Y" que o resultado seria confuso e frágil.
 
-**3. Evolução independente.** Cada plataforma muda no seu ritmo. Quando o a0.dev lança
-um recurso novo, a skill dele é atualizada sem tocar nas outras quatro.
+**3. Evolução independente.** Cada plataforma muda no seu ritmo. Quando uma lança um
+recurso novo, a skill dela é atualizada sem tocar nas outras cinco.
 
 O que é genuinamente compartilhado (o processo de engenharia) vive em um único arquivo,
-`references/vibecode-core.md`, que é idêntico em todas as skills. Assim evitamos
-duplicação no que importa e mantemos independência onde importa.
+`references/vibecode-core.md`, idêntico em todas as skills. Assim evitamos duplicação no
+que importa e mantemos independência onde importa.
 
 ## Família vibecode
 
 | Skill | Plataforma | Melhor para |
 |---|---|---|
-|  **lovable-prompt-builder** (esta skill) | Lovable | App web full-stack com fluxo guiado passo a passo |
+| **lovable-prompt-builder** (esta skill) | Lovable | App web full-stack com fluxo guiado passo a passo |
 | [bolt-prompt-builder](https://github.com/AndreAlmeidaDC/bolt-prompt-builder) | bolt.new | App web full-stack com brief único e controle total |
 | [v0-prompt-builder](https://github.com/AndreAlmeidaDC/v0-prompt-builder) | v0 (Vercel) | Componentes React/shadcn de alta qualidade |
 | [a0-prompt-builder](https://github.com/AndreAlmeidaDC/a0-prompt-builder) | a0.dev | App mobile nativo iOS/Android |
 | [base44-prompt-builder](https://github.com/AndreAlmeidaDC/base44-prompt-builder) | Base44 | Ferramenta interna / protótipo com backend incluído |
+| [emergent-prompt-builder](https://github.com/AndreAlmeidaDC/emergent-prompt-builder) | emergent.sh | Full-stack multi-agente (web + mobile), código seu |
 
 ## Licença
 
