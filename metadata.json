@@ -1,7 +1,7 @@
 {
   "name": "lovable-prompt-builder",
-  "version": "2026.06.16",
-  "last_standardized_at": "2026.06.16 GMT-3",
+  "version": "2026.06.23",
+  "last_standardized_at": "2026.06.23 GMT-3",
   "description": "Vibecode skill for building full-stack web apps with Lovable.dev. Guides the user through intake, branding, LGPD compliance and atomic prompt generation with feedback loop.",
   "license": "MIT",
   "origin_url": "https://github.com/AndreAlmeidaDC/lovable-prompt-builder",

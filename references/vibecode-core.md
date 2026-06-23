@@ -3,7 +3,7 @@
 Este arquivo contém o processo completo de especificação e execução com ferramentas
 de vibe coding. É compartilhado por todas as skills da família vibecode:
 lovable-prompt-builder, bolt-prompt-builder, v0-prompt-builder,
-a0-prompt-builder e base44-prompt-builder.
+a0-prompt-builder, base44-prompt-builder e emergent-prompt-builder.
 
 Cada skill carrega este arquivo + a referência específica da sua plataforma.
 
@@ -43,6 +43,20 @@ Faça TODAS estas perguntas antes de qualquer geração. Não prossiga sem respo
 6. O produto precisa funcionar **offline** ou como **PWA instalável**?
 7. Haverá **múltiplos idiomas** agora ou no futuro próximo?
 8. É **multi-tenant** (múltiplas empresas com dados isolados)?
+
+**Acessibilidade (gate opcional, pergunte logo aqui):**
+
+9. O produto terá **interface web usada por terceiros** (clientes, público) ou
+   precisa atender a requisito de acessibilidade?
+   - **Sim:** carregue `references/accessibility-web.md`. A partir daqui,
+     acessibilidade vira requisito transversal de toda UI gerada, e os critérios
+     entram nos checklists das Fases 5 e 6.
+   - **Não / uso interno:** siga o fluxo normal, sem acessibilidade. É uma escolha
+     legítima (app interno, protótipo, uso da própria equipe), não uma falha. Não
+     insista nem reintroduza o tema depois.
+
+   Em apps **mobile nativos** (a0.dev), esta referência não se aplica: ela é web.
+   Responda "não" e siga.
 
 **Perguntas adicionais:** após as respostas acima, carregue a referência específica
 da plataforma para perguntas complementares de compliance, permissões ou stack.
@@ -140,6 +154,7 @@ PROMPT DE CORREÇÃO:
 - [ ] Inclui estados de erro, carregamento e vazio se relevante?
 - [ ] Não quebra o que já foi construído?
 - [ ] Respeita segurança e permissões do intake?
+- [ ] Se o gate de acessibilidade está ativo: o prompt carrega os requisitos de a11y da referência?
 
 ---
 
@@ -172,6 +187,7 @@ Os artefatos específicos a recolar variam por plataforma. Consulte a referênci
 - [ ] Estados de erro, carregamento e vazio presentes?
 - [ ] Dados protegidos (permissões e segurança configurados)?
 - [ ] Produto acessível pelo usuário final?
+- [ ] Se o gate de acessibilidade está ativo: checklist do `accessibility-web.md` cumprido?
 - [ ] Pendências documentadas ou encerradas?
 
 Consulte a referência da plataforma para critérios específicos de deploy ou
@@ -223,6 +239,11 @@ geração. Sem briefing, sem produto.
 
 **Segurança por design.** Segurança é requisito de cada feature. Os detalhes variam
 por plataforma; a disciplina não.
+
+**Acessibilidade quando ativada.** Se o gate de acessibilidade foi ligado no intake,
+a11y é requisito transversal de toda UI gerada, não etapa final: HTML semântico
+correto desde a primeira geração. Se o gate não foi ligado, não se aplica e não se
+menciona.
 
 **Feedback loop.** Nenhum prompt novo sem confirmação do resultado do anterior.
 
