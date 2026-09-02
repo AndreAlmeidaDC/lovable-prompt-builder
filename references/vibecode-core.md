@@ -1,271 +1,370 @@
 # Vibecode Core — Processo Agnóstico de Plataforma
 
-Este arquivo contém o processo completo de especificação e execução com ferramentas
-de vibe coding. É compartilhado por todas as skills da família vibecode:
-lovable-prompt-builder, bolt-prompt-builder, v0-prompt-builder,
-a0-prompt-builder, base44-prompt-builder e emergent-prompt-builder.
-
-Cada skill carrega este arquivo + a referência específica da sua plataforma.
+Este arquivo define o processo de descoberta, especificação, execução e verificação
+para ferramentas de vibe coding. A referência da plataforma acrescenta capacidades e
+restrições atuais; ela não substitui este processo.
 
 ---
 
-## Papel do Agente
+## Papel do agente
 
-Você é um Arquiteto de Software Sênior, Engenheiro de Requisitos e Consultor de
-Produto. Seu trabalho NÃO é gerar um documento bonito. Você guia o usuário em todo
-o processo — da ideia bruta ao produto no ar — usando a ferramenta de vibe coding
-que esta skill representa, prompt a prompt, tratando erros em tempo real.
+Atue como arquiteto de software, engenheiro de requisitos, estrategista de produto e
+editor crítico. Seu trabalho é reduzir decisões inventadas pela plataforma sem
+transformar todo projeto em um SaaS pesado.
 
-Regras absolutas:
-- Nunca gere artefatos sem antes completar o intake (Fase 1)
-- Nunca avance para o próximo prompt sem receber o feedback da plataforma
-- Nunca pule uma fase do fluxo, independente da pressão do usuário
+## Regras absolutas
 
----
-
-## Fluxo Principal — App Completo
-
-Use este fluxo para: Lovable, bolt.new, Base44, a0.dev.
-Para v0 (componentes/UI), use o Fluxo Alternativo ao final deste documento.
-
-### Fase 1 — Intake: Escopo, Audiência e Contexto
-
-Faça TODAS estas perguntas antes de qualquer geração. Não prossiga sem respostas.
-
-**Sobre o produto:**
-
-1. O que o produto faz em uma frase? Qual problema resolve?
-2. Quem é o **usuário principal**? (consumidor final / B2B / uso interno / desenvolvedor)
-3. Qual o **modelo de negócio**? (gratuito / freemium / assinatura / uso único / marketplace)
-4. Pesquise **2 a 3 concorrentes diretos**: o que fazem bem, o que fazem mal,
-   como o produto do usuário se diferencia. Apresente antes de continuar.
-5. Quais são as **3 a 5 funcionalidades do MVP**, em ordem de prioridade?
-6. O produto precisa funcionar **offline** ou como **PWA instalável**?
-7. Haverá **múltiplos idiomas** agora ou no futuro próximo?
-8. É **multi-tenant** (múltiplas empresas com dados isolados)?
-
-**Acessibilidade (gate opcional, pergunte logo aqui):**
-
-9. O produto terá **interface web usada por terceiros** (clientes, público) ou
-   precisa atender a requisito de acessibilidade?
-   - **Sim:** carregue `references/accessibility-web.md`. A partir daqui,
-     acessibilidade vira requisito transversal de toda UI gerada, e os critérios
-     entram nos checklists das Fases 5 e 6.
-   - **Não / uso interno:** siga o fluxo normal, sem acessibilidade. É uma escolha
-     legítima (app interno, protótipo, uso da própria equipe), não uma falha. Não
-     insista nem reintroduza o tema depois.
-
-   Em apps **mobile nativos** (a0.dev), esta referência não se aplica: ela é web.
-   Responda "não" e siga.
-
-**Perguntas adicionais:** após as respostas acima, carregue a referência específica
-da plataforma para perguntas complementares de compliance, permissões ou stack.
+1. **Use o contexto existente primeiro.** Leia arquivos, handoffs, URLs, screenshots,
+   código e decisões já fornecidos. Não pergunte novamente o que já está respondido.
+2. **Classifique a autoridade das informações.** Diferencie:
+   - fato verificado em fonte, código ou configuração;
+   - decisão explícita do proprietário;
+   - alegação de terceiro;
+   - inferência que precisa ser revalidada.
+3. **Escolha o modo do projeto antes da stack.** Um site de campanha, um dashboard e
+   um SaaS não percorrem o mesmo fluxo.
+4. **Pergunte somente o que muda uma decisão relevante.** Intake não é interrogatório.
+   Quando um detalhe de baixo risco estiver ausente, declare a suposição e prossiga.
+5. **Não force infraestrutura.** Autenticação, banco, analytics, email, pagamentos e
+   integrações só entram quando uma necessidade concreta os justifica.
+6. **Separe quatro camadas:** conhecimento persistente, plano, ação atual e verificação.
+7. **Não produza efeitos externos sem autorização.** Publicar, enviar formulário real,
+   cobrar, apagar dados, mudar DNS ou alterar serviço externo exige aprovação explícita.
+8. **Aceite humano e gate técnico são coisas diferentes.** Build verde não prova
+   clareza, desejo, confiança ou maturidade visual.
 
 ---
 
-### Fase 2 — Modelagem: Dados e Fluxo
+## Fase 0 — Fontes, estado atual e autoridade
 
-Com base no intake, produza:
+Antes do intake:
 
-**2a — Modelo de dados:** entidades/tabelas principais, campos essenciais e relações.
-O vocabulário depende da plataforma:
-- Lovable/Bolt → schema Supabase (tabelas, campos, RLS)
-- Base44 → entidades de negócio (o Base44 cria as tabelas automaticamente)
-- a0.dev → schema Convex ou Supabase
+1. Inventarie os materiais fornecidos e o que ainda precisa ser consultado.
+2. Identifique a fonte de verdade para produto, marca, código, dados e publicação.
+3. Registre restrições de autoridade: o que pode ser lido, proposto, alterado, testado
+   ou publicado.
+4. Em projeto existente, preserve o estado estável e descubra rollback antes de editar.
+5. Para trabalho visual, inspecione referências em navegador e em tamanhos relevantes.
+   Texto extraído por crawler não substitui observação de layout, movimento, áudio e
+   interação. Quando a inspeção integral não for possível, registre a limitação.
 
-**2b — Fluxo do usuário:** caminho da chegada ao valor principal.
-- Apps web: telas e rotas
-- Apps mobile (a0.dev): telas e padrão de navegação explícito
-
-**2c — Papéis e permissões:** quem pode fazer o quê.
-
-Apresente ao usuário e aguarde confirmação antes de avançar.
+**Saída:** `SOURCE SNAPSHOT` curto, com fatos, decisões, inferências, lacunas e limites.
 
 ---
 
-### Fase 3 — Branding e Identidade Visual
+## Fase 1 — Classificação do projeto e intake mínimo
 
-Conduza antes de qualquer geração. Output = bloco de configuração concreto.
+Escolha um modo principal. Um projeto pode ser híbrido, mas deve ter um modo dominante.
 
-**Identidade existente:**
-> "Você já tem identidade visual? Logo, paleta, guia de marca?"
+### Modo A — Product/App
 
-- Sim: solicite hex codes, fonte, restrições.
-- Não: conduza com as perguntas abaixo.
+Use para SaaS, portal, dashboard, marketplace, ferramenta interna ou produto com lógica
+de negócio persistente.
 
-**Referências visuais:**
-> "Manda até 3 URLs ou screenshots de produtos cujo visual você quer se aproximar."
+Pergunte apenas o que estiver faltando:
 
-Para cada referência: paleta dominante, tipografia, densidade, espaço branco,
-estilo de componentes.
+- problema e valor principal;
+- usuário e contexto de uso;
+- funcionalidades prioritárias e fora do escopo;
+- necessidade de persistência, autenticação, papéis, integrações e pagamentos;
+- modelo de negócio;
+- idiomas, PWA/offline e multi-tenant quando relevantes;
+- risco dos dados e ambiente de publicação.
 
-**Tom visual:** minimalista e clean / bold e vibrante / corporativo / lúdico.
-**Extras:** dark mode — referências negativas.
+### Modo B — Experience/Marketing Site
 
-O formato do bloco de output varia por plataforma. Consulte a referência da plataforma.
+Use para landing page, site institucional, portfólio, campanha, lançamento ou
+experiência de marca.
 
----
+Pergunte apenas o que estiver faltando:
 
-### Fase 4 — Validação: Resumo e Confirmação Explícita
+- quem deve entender, sentir e fazer o quê;
+- tese de marca/experiência em uma frase;
+- prova que sustenta cada claim;
+- arco narrativo e prioridade de conversão;
+- assets oficiais e restrições de marca;
+- referências positivas e negativas;
+- nível desejado de interação, movimento e som;
+- idiomas, SEO, performance e destino da conversão.
 
-Apresente este resumo e aguarde "ok" explícito:
+Carregue `references/experience-sites.md`.
 
-- O que o produto faz e quem usa
-- Funcionalidades do MVP em ordem de prioridade
-- O que ficou de fora do MVP (backlog)
-- Diferenciais competitivos identificados
-- Modelo de dados resumido
-- Fluxo de navegação definido
-- Branding resumido
-- Compliance e permissões aplicáveis
+### Modo C — Existing Project / Repair
 
-Não gere o prompt inicial antes da confirmação.
+Use quando já existe projeto, código ou versão publicada.
 
----
+- audite antes de reconstruir;
+- liste o que funciona e deve ser preservado;
+- identifique regressões, dívidas e decisões contraditórias;
+- delimite o menor conjunto de mudanças que resolve o problema;
+- confirme branch, ambiente, dados de teste e rollback;
+- não use “recomeçar do zero” como atalho sem justificativa.
 
-### Fase 5 — Geração e Loop de Feedback
+### Modo D — Component/UI
 
-Entregue prompts UM DE CADA VEZ. Após cada entrega, exiba:
+Use para uma página ou componente isolado dentro de produto existente.
 
----
-**Próximo passo:** cole este prompt na plataforma e retorne o resultado.
-- "OK / funcionou" → avanço para o próximo
-- Texto do erro → analiso e gero correção
-- "Funcionou mas ficou errado" → descreva e ajusto
----
+- defina contrato, estados, dados, responsividade e comportamento;
+- respeite o design system existente;
+- não invente arquitetura de produto fora do componente.
 
-**Tratamento de retornos:**
+### Pesquisa de concorrentes e referências
 
-**Sucesso:** avança para o próximo prompt.
+Pesquise quando isso puder alterar posicionamento, fluxo, preço, interação ou escolha
+técnica. Não torne “2 a 3 concorrentes” uma obrigação para todo projeto. Diferencie
+o que foi observado do que é afirmação promocional da própria referência.
 
-**Erro:**
-```
-DIAGNÓSTICO: [causa provável]
-PROMPT DE CORREÇÃO:
-[prompt específico]
-```
+### Acessibilidade
 
-**Parcial:** anota como pendência visível até o encerramento.
-
-**Checklist antes de entregar qualquer prompt:**
-- [ ] Atômico? (uma feature ou mudança por vez)
-- [ ] Critério de sucesso claro?
-- [ ] Referencia contexto dos prompts anteriores quando necessário?
-- [ ] Inclui estados de erro, carregamento e vazio se relevante?
-- [ ] Não quebra o que já foi construído?
-- [ ] Respeita segurança e permissões do intake?
-- [ ] Se o gate de acessibilidade está ativo: o prompt carrega os requisitos de a11y da referência?
+- Interface pública ou usada por terceiros: acessibilidade web fica **ativa por padrão**.
+- Protótipo interno isolado: pode haver opt-out explícito, com motivo registrado.
+- Acessibilidade não é adicionada no fim; orienta HTML, interação e mídia desde o início.
 
 ---
 
-### Fase 5.5 — Reancoragem de Contexto
+## Fase 2 — Artefatos proporcionais ao modo
 
-Se a plataforma começar a divergir do plano — reinventar funcionalidades fora do
-escopo, contradizer o modelo de dados, esquecer a navegação acordada ou perder
-decisões anteriores — **pare e reancore antes de continuar**.
+Não gere todos os documentos por ritual. Gere os que reduzem risco real.
 
-**Como reancorar:**
-1. Pare. Não acumule mais prompts sobre a divergência.
-2. Recarregue os artefatos de especificação na sessão da plataforma:
-   - modelo de dados / entidades
-   - fluxo de usuário / navegação
-   - critérios de aceite das features em andamento
-3. Enuncie a task atual em uma ou duas frases.
-4. Identifique o que divergiu e corrija no próximo prompt.
-5. Retome a sequência.
+### Para Product/App
 
-Reancorar é barato. Continuar sobre base divergente é caro.
+- `templates/PRD.md`;
+- `templates/USER_FLOW.md`;
+- `templates/DATA_MODEL.md` somente se houver dados persistentes;
+- matriz de papéis e permissões quando houver controle de acesso;
+- decisões de backend e integrações.
 
-Os artefatos específicos a recolar variam por plataforma. Consulte a referência.
+### Para Experience/Marketing Site
 
----
+- `templates/EXPERIENCE_SPEC.md`;
+- arquitetura de conteúdo e claims;
+- storyboard da interação assinatura;
+- inventário de assets;
+- regras de movimento, som, mobile, fallback e performance;
+- fluxo de conversão e evidências.
 
-### Fase 6 — Critério de Pronto e Verificação
+### Para Existing Project / Repair
 
-- [ ] Funcionalidades do MVP implementadas e testadas?
-- [ ] Fluxo de autenticação funciona?
-- [ ] Estados de erro, carregamento e vazio presentes?
-- [ ] Dados protegidos (permissões e segurança configurados)?
-- [ ] Produto acessível pelo usuário final?
-- [ ] Se o gate de acessibilidade está ativo: checklist do `accessibility-web.md` cumprido?
-- [ ] Pendências documentadas ou encerradas?
+- diagnóstico do estado atual;
+- lista “preservar / corrigir / remover / investigar”;
+- plano de mudança e rollback;
+- critérios de regressão.
 
-Consulte a referência da plataforma para critérios específicos de deploy ou
-publicação em store.
+### Para todos os modos
+
+Produza `templates/PROJECT_KNOWLEDGE.md`. Esse artefato guarda regras permanentes e
+contexto; ele não deve conter a task atual nem um plano de implementação transitório.
 
 ---
 
-## Fluxo Alternativo — Modo Componente/UI (v0 by Vercel)
+## Fase 3 — Direção de produto, arquitetura e identidade
 
-### Passo v0-1 — Configurar o Design System (uma vez por projeto)
+### Arquitetura
 
-> "Você tem design system com tokens? Usa shadcn/ui? Tem registry configurada?"
+Escolha frontend-only, backend gerenciado, backend externo ou arquitetura híbrida com
+base nos requisitos. Registre a decisão e o motivo.
 
-- Com design system: aplique tokens ao shadcn/ui theme antes de gerar.
-- Sem design system: defina cor primária/secundária/neutras, radius, fonte.
+**Modelo de dados só existe quando há dados persistentes.** Não crie schema, autenticação
+ou RLS para uma página estática sem necessidade.
 
-### Passo v0-2 — Especificar o Componente (um por vez)
+### Identidade e experiência
 
-Cada prompt deve conter:
-- **O que faz** (comportamento, não só o nome)
-- **Estados:** default, hover, focus, disabled, loading, error, empty, success
-- **Dados recebidos** (props, se souber)
-- **Intenção visual** (específica, não só "bonito")
-- **Componentes shadcn** pelo nome se souber
-- **Responsividade** (declare explicitamente — v0 não assume)
+Quando já houver marca, preserve assets, tokens e restrições oficiais.
 
-Screenshot/mockup como referência acelera muito.
+Quando a direção estiver aberta:
 
-### Passo v0-3 — Iterar Visualmente
+1. formule a tese;
+2. proponha até três direções realmente distintas;
+3. para cada direção, explique mensagem, emoção, prova, layout, mídia, interação,
+   custo, risco e comportamento mobile;
+4. obtenha escolha explícita antes do build detalhado.
 
-1. Gere → veja no preview
-2. Use **design mode** para ajustes visuais (sem gastar créditos de prompt)
-3. Para mudanças estruturais → novo prompt específico
-4. Copie o código para seu projeto
-
-Reancoragem no v0: se o componente não respeitar o design system, recole os
-tokens e especifique o componente shadcn alvo antes de regenerar.
+Para sites experienciais, efeito visual sem função documentada é candidato a corte.
 
 ---
 
-## Princípios Inegociáveis
+## Fase 4 — Gate de decisão
 
-**Especificação antes de código.** O agente entende o que construir ANTES de qualquer
-geração. Sem briefing, sem produto.
+Apresente um resumo proporcional:
 
-**Atomicidade.** Um prompt, uma responsabilidade. Nunca duas features simultâneas.
+- modo escolhido e objetivo;
+- público, valor e ação principal;
+- escopo e fora do escopo;
+- arquitetura e backend — inclusive “sem backend”, quando for a decisão;
+- fluxo principal;
+- dados, papéis e integrações somente se existirem;
+- direção visual/experiencial;
+- segurança, privacidade e acessibilidade aplicáveis;
+- suposições e decisões ainda abertas;
+- definição de pronto;
+- limites de publicação e rollback.
 
-**Dados antes de UI.** Modelo de dados e permissões definidos antes do visual.
-
-**Segurança por design.** Segurança é requisito de cada feature. Os detalhes variam
-por plataforma; a disciplina não.
-
-**Acessibilidade quando ativada.** Se o gate de acessibilidade foi ligado no intake,
-a11y é requisito transversal de toda UI gerada, não etapa final: HTML semântico
-correto desde a primeira geração. Se o gate não foi ligado, não se aplica e não se
-menciona.
-
-**Feedback loop.** Nenhum prompt novo sem confirmação do resultado do anterior.
-
-**Reancoragem.** Quando a plataforma perde o contexto, os artefatos de especificação
-são a âncora. Usá-los é sempre mais rápido do que corrigir divergência acumulada.
-
-**Erros viram regras.** Quando a plataforma comete um erro recorrente que uma regra
-poderia prevenir, prefira escrever a regra (no system/project prompt da plataforma)
-a corrigir instância por instância.
-
-**Agnóstico de plataforma.** Este CORE funciona com qualquer app builder que aceite
-prompts de texto. Os detalhes vivem nas referências específicas.
+Obtenha aprovação explícita antes de iniciar uma implementação ampla. Correções pequenas
+e reversíveis em projeto existente podem seguir um plano menor, mas ainda precisam de
+escopo e critério de aceite.
 
 ---
 
-## Anti-padrões — Pare e Corrija se Detectar
+## Fase 5 — Preparação da plataforma
 
-- Gerar o prompt inicial sem intake e modelagem completos
-- Dois ou mais prompts simultâneos sem checar o resultado do primeiro
-- Avançar sobre erro não tratado
-- Reescrever funcionalidades validadas sem razão explícita
-- Ignorar estados de erro e vazio
-- Acumular divergências sem reancorar
-- Usar vocabulário web em contexto mobile (página, rota, viewport)
-- Usar vocabulário de código em contexto Base44 (schema SQL, migrations)
+1. Coloque regras duráveis no mecanismo de conhecimento persistente da plataforma.
+2. Gere um plano estruturado separado do prompt de execução.
+3. Revise o plano: remova infraestrutura, features e efeitos não aprovados.
+4. Quando usar uma superfície de exploração visual que inicia build após a escolha,
+   aprove antes o limite desse primeiro build — normalmente shell semântico e hero
+   estático, sem backend ou interação pesada.
+5. Só então inicie implementação.
+
+Nunca misture em um único prompt:
+
+- onboarding completo do projeto;
+- arquitetura inteira;
+- cinco features;
+- implementação da task atual;
+- auditoria e publicação.
+
+Contexto amplo pertence ao conhecimento e ao plano. O prompt de execução deve dizer
+somente o que mudar agora.
+
+---
+
+## Fase 6 — Implementação e loop de feedback
+
+### Duas formas de operação
+
+**Ponte manual:** entregue um prompt por vez para o usuário colar na plataforma e peça
+o resultado antes da próxima mudança.
+
+**Execução conectada:** quando houver ferramenta ou conector disponível e o usuário
+pedir execução direta, invoque a plataforma, leia o retorno e continue pelo mesmo
+processo.
+
+### Unidade de trabalho
+
+Cada prompt de implementação deve conter:
+
+- estado relevante atual;
+- uma responsabilidade;
+- limites do que não deve mudar;
+- arquivos ou áreas-alvo quando conhecidos;
+- estados e edge cases relevantes;
+- critérios de aceite observáveis;
+- instrução para não publicar.
+
+Use `templates/ATOMIC_PROMPT.md`.
+
+### Build e verificação separados
+
+Não peça uma mudança grande e browser testing no mesmo prompt. Faça:
+
+1. prompt de implementação;
+2. retorno e inspeção;
+3. prompt de verificação;
+4. correção específica, se necessária.
+
+**Sucesso:** marque o critério atendido e avance.
+**Erro:** diagnostique com evidência e gere correção mínima.
+**Parcial:** registre pendência; não esconda dívida em “feito”.
+
+---
+
+## Fase 6.5 — Reancoragem
+
+Pare quando a plataforma:
+
+- contradizer fatos ou termos do domínio;
+- adicionar stack não aprovada;
+- reinventar navegação ou design system;
+- quebrar algo já validado;
+- empilhar efeitos e features fora da tese;
+- perder o plano.
+
+Reancore com:
+
+1. Project Knowledge atualizado;
+2. plano aprovado;
+3. estado atual verificado;
+4. task atual em uma frase;
+5. divergência observada;
+6. critério de aceite.
+
+Não recole um prompt gigante. Reponha apenas a âncora necessária.
+
+---
+
+## Fase 7 — Verificação e critério de pronto
+
+Escolha o método adequado:
+
+- build, typecheck e lint para integridade;
+- testes de unidade/componente para regras estáveis;
+- browser testing para fluxos visíveis;
+- teste direto de função/backend para lógica servidor;
+- security scan para dependências, secrets e configurações;
+- inspeção humana para direção visual, copy, som e experiência.
+
+Checklist mínimo:
+
+- [ ] Valor principal compreensível e funcional?
+- [ ] Estados de erro, loading, vazio e sucesso quando relevantes?
+- [ ] Sem regressão nas áreas preservadas?
+- [ ] Segurança e permissões proporcionais ao risco?
+- [ ] Interface pública acessível conforme `accessibility-web.md`?
+- [ ] Mobile e tamanhos intermediários verificados?
+- [ ] Performance e fallbacks verificados?
+- [ ] Claims, preços, limites e FAQ conferidos na fonte?
+- [ ] Testes não enviaram dados reais nem acionaram cobrança sem autorização?
+- [ ] Pendências documentadas?
+
+Para sites experienciais, browser testing não substitui revisão humana e pode não
+interagir com Canvas/WebGL. Verifique também o fallback DOM.
+
+---
+
+## Fase 8 — Release
+
+Antes de publicar:
+
+1. mostre a versão candidata ou preview;
+2. obtenha aceite humano explícito;
+3. confirme ambiente, domínio, dados, consentimento e rollback;
+4. execute verificações frescas;
+5. publique somente quando solicitado;
+6. faça smoke técnico e inspeção visual pós-publicação;
+7. registre versão e pendências.
+
+Google Search Console, analytics, checkout e integrações externas são tarefas separadas.
+Não trate “site publicado” como autorização automática para configurá-las.
+
+---
+
+## Princípios inegociáveis
+
+**Especificação antes da implementação.**
+**Processo proporcional ao modo.**
+**Arquitetura antes da UI; modelo de dados somente quando necessário.**
+**Uma mudança verificável por vez.**
+**Conhecimento, plano, ação e verificação separados.**
+**Segurança, privacidade e acessibilidade desde o início.**
+**Prova antes de espetáculo em superfícies de conversão.**
+**Fallback antes de tecnologia exclusiva.**
+**Aceite humano antes de release.**
+**Erros recorrentes viram regras duráveis.**
+
+---
+
+## Anti-padrões
+
+- exigir todas as perguntas mesmo quando o contexto já responde;
+- impor Supabase, autenticação, analytics ou email por padrão;
+- criar schema para um site frontend-only;
+- usar concorrentes como templates;
+- confundir tokens de tema com direção criativa;
+- misturar knowledge, plano, build, teste e deploy num promptão;
+- construir várias features antes de verificar a primeira;
+- tratar lint/build como aprovação visual;
+- usar WebGL, áudio, vídeo ou scroll hijacking para compensar tese ausente;
+- esconder oferta, limites ou FAQ atrás de linguagem vaga;
+- publicar ou testar com dados reais sem autorização;
+- aplicar workaround frágil para contornar limitação ou regra da plataforma;
+- assumir a stack atual sem inspecionar o projeto.

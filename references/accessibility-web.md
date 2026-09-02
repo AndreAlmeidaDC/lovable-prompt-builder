@@ -1,104 +1,147 @@
-# Acessibilidade Web (Referência Opcional)
+# Acessibilidade Web
 
-> Estrutura inspirada no A11Y.md de Felipe A. Carriço (github.com/fecarrico/A11Y.md),
-> licença MIT. Reescrita para o contexto desta família de skills, não copiada.
+> Estrutura inspirada no A11Y.md de Felipe A. Carriço
+> (github.com/fecarrico/A11Y.md), licença MIT, reescrita para esta família de skills.
 
-Esta referência só se aplica a **UI web (DOM, SPA)** e só quando o gate de
-acessibilidade foi ativado na Fase 1 do intake. Se o gate não foi ativado, ignore
-este arquivo por completo. Não cobre mobile nativo (ver "Fora de escopo" no fim).
+Alvo padrão: WCAG 2.2 nível AA.
 
-Alvo: WCAG 2.2 nível AA.
+Esta referência se aplica por padrão a sites e aplicações web públicas ou usadas por
+terceiros. Protótipos internos isolados podem optar por não ativá-la, desde que o motivo
+seja explícito e não exista público externo.
 
----
-
-## Princípio Central
-
-HTML semântico correto entrega a maior parte da acessibilidade de graça. O leitor de
-tela (NVDA, JAWS, VoiceOver) já existe no dispositivo do usuário e lê qualquer página
-SE a página for construída certo. Acessibilidade não é feature que se liga: é
-consequência direta de como o código é escrito. Cravar ARIA por cima de HTML errado
-piora, não conserta.
+Acessibilidade não é acabamento. Ela define HTML, foco, teclado, mídia, movimento e
+fallback desde o primeiro componente.
 
 ---
 
-## Regras Determinísticas (não-negociáveis quando o gate está ativo)
+## 1. HTML semântico
 
-### 1. HTML semântico primeiro
-- `button` real para ação, `a` para navegação. Nunca `div`/`span` clicável com onClick.
-- Um `h1` por página. Headings em ordem, sem pular nível (não vá de h2 para h4).
-- Landmarks: `header`, `nav`, `main`, `footer`. Conteúdo principal dentro de `main`.
-- Lista é `ul`/`ol`/`li`. Tabela de dados é `table` com `th` e escopo.
-
-### 2. Imagem e mídia
-- Toda `img` tem `alt`. Decorativa: `alt=""`. Informativa: descreve função ou conteúdo.
-- Ícone clicável isolado precisa de nome acessível (`aria-label`).
-- Vídeo precisa de legenda. Áudio precisa de transcrição.
-
-### 3. Foco
-- Foco sempre visível. Nunca `outline: none` sem um indicador substituto claro.
-- Ordem de foco segue a ordem visual e lógica da página.
-- Em SPA: ao trocar de rota, mova o foco para o topo ou para o `h1` da nova view.
-- Modal: foco entra no modal, fica preso dentro enquanto aberto, ESC fecha, e o foco
-  retorna ao elemento que abriu ao fechar.
-
-### 4. Teclado
-- Tudo que funciona no mouse funciona no teclado (Tab, Enter, Espaço, Esc, setas).
-- Sem armadilha de teclado: o foco que entra em algo sempre consegue sair.
-- Skip link para o conteúdo principal em páginas com navegação extensa.
-
-### 5. ARIA (regra de ouro: menos é mais)
-- HTML nativo SEMPRE antes de ARIA. ARIA não conserta HTML semântico errado.
-- Primeira regra do ARIA: se existe elemento nativo que faz o trabalho, use o nativo.
-- `aria-live="polite"` para conteúdo que muda sem reload (toast, resultado de busca,
-  mensagem de validação). `assertive` só para o que é urgente de fato.
-- Estado dinâmico reflete o real: `aria-expanded`, `aria-selected`, `aria-checked`.
-- Não coloque `aria-label` em elemento que já tem texto visível coerente.
-
-### 6. Contraste
-- Texto normal: contraste mínimo 4.5:1 contra o fundo.
-- Texto grande (cerca de 24px, ou 19px em bold) e componentes de UI: 3:1.
-- Informação nunca transmitida só por cor. Erro não é só vermelho: tem ícone ou texto.
-
-### 7. Formulário
-- Todo campo tem `label` associado (`for`/`id`). Placeholder não é label.
-- Erro vinculado ao campo (`aria-describedby`), com texto claro do que corrigir.
-- Campo obrigatório marcado de forma programática, não só visual.
-- Campos relacionados agrupados em `fieldset`/`legend`.
+- `button` para ação e `a` para navegação.
+- Um `h1` principal por página; headings em hierarquia lógica.
+- `header`, `nav`, `main`, `footer` e outros landmarks adequados.
+- Listas e tabelas usam elementos nativos.
+- Não transforme `div` ou `span` em controle clicável.
+- ARIA só entra quando HTML nativo não resolve.
 
 ---
 
-## Protocolo de Componente Complexo
+## 2. Nomes, estados e feedback
 
-Antes de construir algo custom (dropdown, tabs, accordion, combobox, date picker,
-tooltip, menu):
-
-1. Existe primitiva nativa ou de biblioteca acessível (Radix, shadcn/ui, React Aria,
-   Headless UI)? Use ela. Não reinvente acessibilidade do zero.
-2. Se for custom mesmo: consulte o padrão do componente no ARIA Authoring Practices
-   Guide (APG, w3.org/WAI/ARIA/apg). Implemente os roles, estados e a navegação de
-   teclado que o padrão exige.
-3. Componente custom sem o padrão APG completo é componente inacessível. Não entregue.
+- Controles precisam de nome acessível coerente com o texto visível.
+- Ícone isolado precisa de `aria-label` ou texto oculto adequado.
+- Estados dinâmicos refletem o real: `aria-expanded`, `aria-selected`,
+  `aria-checked`, `aria-current`.
+- Mensagens de validação e resultados assíncronos usam região viva adequada.
+- Não duplique texto visível com `aria-label` divergente.
 
 ---
 
-## Checklist de Acessibilidade (rodar quando o gate está ativo)
+## 3. Foco e teclado
 
-- [ ] Navegação completa só por teclado funciona
-- [ ] Foco visível em todo elemento interativo
-- [ ] Toda imagem informativa tem `alt`; decorativa tem `alt=""`
-- [ ] Headings em ordem, um `h1`, landmarks presentes
-- [ ] Contraste 4.5:1 (texto normal) e 3:1 (texto grande e UI)
-- [ ] Formulário com label associado e erro acessível
-- [ ] Modal prende o foco, ESC fecha, foco retorna ao gatilho
-- [ ] Conteúdo dinâmico anunciado (`aria-live` onde muda sem reload)
-- [ ] Nenhuma informação transmitida apenas por cor
-- [ ] Componente custom segue o padrão ARIA APG ou usa primitiva acessível
+- Foco sempre visível e com contraste suficiente.
+- Nada de `outline: none` sem substituto.
+- Ordem de foco segue a ordem lógica.
+- Tudo que funciona com ponteiro funciona com teclado.
+- Modal: foco entra, fica contido, ESC fecha e o foco volta ao gatilho.
+- Mudança de rota SPA reposiciona o foco de forma previsível.
+- Skip link em páginas com navegação repetida.
+- Conteúdo sticky, banners e modais não podem ocultar o elemento focado.
 
 ---
 
-## Fora de escopo desta referência
+## 4. Formulários
 
-Mobile nativo (iOS, Android) tem outro modelo de acessibilidade: touch target,
-screen reader nativo (TalkBack, VoiceOver iOS), contraste e gestos próprios. Esta
-referência cobre só web com DOM. Para apps mobile (a0.dev, lado mobile do emergent),
-acessibilidade nativa é assunto separado e não está coberta aqui.
+- Todo campo tem `label` associado; placeholder não é label.
+- Obrigatoriedade e formato são programáticos e visuais.
+- Erro é claro, ligado ao campo e informa como corrigir.
+- Validação no cliente melhora UX; validação servidor/banco continua obrigatória para
+  segurança.
+- Campos relacionados usam `fieldset` e `legend`.
+- Não apague dados já digitados após erro recuperável.
+
+---
+
+## 5. Imagens, vídeo e áudio
+
+- Imagem informativa tem `alt` que descreve conteúdo/função.
+- Imagem decorativa usa `alt=""`.
+- Vídeo informativo tem legenda; áudio informativo tem transcrição.
+- Som começa desligado e possui controle visível.
+- Nada de autoplay com áudio.
+- Feedback sonoro sempre tem equivalente visual/textual.
+- Controles de mídia são operáveis por teclado.
+
+---
+
+## 6. Movimento, scroll e experiência imersiva
+
+- Respeite `prefers-reduced-motion`.
+- A versão reduced-motion não pode perder conteúdo ou ação.
+- Não dependa de parallax, gesto, hover ou animação para transmitir informação.
+- Evite scroll hijacking; preserve rolagem, histórico e controle do usuário.
+- Animações disparadas por interação devem poder ser pausadas, puladas ou reiniciadas
+  quando duradouras.
+- Conteúdo piscando deve respeitar limites de segurança e ser evitado.
+
+### Canvas, WebGL e 3D
+
+- Canvas/WebGL nunca é a única forma de acessar conteúdo ou CTA.
+- Forneça alternativa DOM/estática equivalente.
+- Controles da experiência precisam de operação por teclado fora da superfície gráfica
+  quando necessário.
+- Estado e resultado importantes devem ser anunciados em texto.
+- Falha de GPU, WebGL ou carregamento ativa fallback automaticamente.
+- Browser testing pode não operar Canvas; faça teste manual e do fallback.
+
+---
+
+## 7. Contraste, tamanho e reflow
+
+- Texto normal: contraste mínimo 4,5:1.
+- Texto grande e componentes gráficos essenciais: 3:1 quando a WCAG permitir.
+- Foco e estados interativos também precisam de contraste.
+- Informação nunca depende só de cor.
+- Alvos de ponteiro seguem WCAG 2.2: pelo menos 24 × 24 CSS px, salvo exceções.
+- Layout deve refluír em largura equivalente a 320 CSS px e suportar zoom de 400% sem
+  perda de conteúdo ou operação, salvo exceções legítimas.
+- Texto deve permitir espaçamento ampliado sem quebra funcional.
+
+---
+
+## 8. Componentes complexos
+
+Antes de criar dropdown, tabs, accordion, combobox, date picker, tooltip ou menu:
+
+1. use primitiva nativa ou biblioteca acessível quando possível;
+2. consulte o padrão do WAI-ARIA Authoring Practices Guide;
+3. implemente teclado, roles, estados e foco completos;
+4. não entregue componente custom incompleto por parecer visualmente correto.
+
+---
+
+## 9. Teste
+
+Automação ajuda, mas não certifica conformidade.
+
+- [ ] navegação completa por teclado;
+- [ ] foco visível e não oculto;
+- [ ] headings e landmarks;
+- [ ] imagens e mídia com alternativas;
+- [ ] formulários e erros acessíveis;
+- [ ] contraste e informação não dependente de cor;
+- [ ] reflow/zoom;
+- [ ] reduced motion;
+- [ ] fallback de Canvas/WebGL;
+- [ ] teste automatizado com axe ou equivalente;
+- [ ] amostra manual com leitor de tela;
+- [ ] mobile e orientação/tamanhos relevantes;
+- [ ] conteúdo dinâmico anunciado.
+
+Não declare “WCAG compliant” apenas porque Lighthouse ou axe não encontrou erro.
+
+---
+
+## Fora de escopo
+
+Aplicativos mobile nativos têm modelo próprio de acessibilidade, incluindo leitores de
+tela nativos, gestos, touch targets e APIs da plataforma. Esta referência cobre web.

@@ -1,26 +1,43 @@
 {
   "name": "lovable-prompt-builder",
-  "version": "2026.06.23",
-  "last_standardized_at": "2026.06.23 GMT-3",
-  "description": "Vibecode skill for building full-stack web apps with Lovable.dev. Guides the user through intake, branding, LGPD compliance and atomic prompt generation with feedback loop.",
+  "version": "2026.09.01",
+  "last_standardized_at": "2026-09-01 23:18 GMT-3",
+  "description": "Skill for planning, building, redesigning, auditing, testing and releasing websites and web apps with Lovable. Supports product apps, experiential/marketing sites and existing-project recovery without forcing unnecessary backend infrastructure.",
   "license": "MIT",
   "origin_url": "https://github.com/AndreAlmeidaDC/lovable-prompt-builder",
   "origin_git_url": "https://github.com/AndreAlmeidaDC/lovable-prompt-builder.git",
   "family": "vibecode-prompt-builder",
   "platform": "Lovable",
   "update_policy": "version-check.md",
+  "supported_project_modes": [
+    "product-app",
+    "experience-marketing-site",
+    "existing-project-repair",
+    "component-ui"
+  ],
+  "execution_modes": [
+    "manual-prompt-bridge",
+    "connected-lovable-tools"
+  ],
+  "confirmation_required_for": [
+    "publish-or-deploy",
+    "destructive-changes",
+    "real-data-submission",
+    "checkout-or-payment",
+    "external-service-mutation"
+  ],
   "declared_capabilities": {
     "network_egress": {
-      "expected": false,
-      "reason": "Prompt-generation skill; performs no network calls."
+      "expected": true,
+      "reason": "The host agent may check the canonical repository, consult official documentation, and research user-provided references. Private project data must not be transmitted without explicit consent."
     },
     "subprocess": {
       "expected": false,
-      "reason": "No subprocess execution."
+      "reason": "The skill package itself does not require shell execution."
     },
     "dependency_install": {
       "expected": false,
-      "reason": "No package installation."
+      "reason": "The skill package has no runtime dependencies to install."
     }
   }
 }

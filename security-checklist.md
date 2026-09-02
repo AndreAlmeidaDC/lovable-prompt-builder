@@ -1,201 +1,278 @@
-# Checklist de Segurança para Apps Lovable — v2.0
+# Segurança e Privacidade para Projetos Lovable — v3.0
 
-*Autor: André Almeida*
+Este checklist é proporcional ao risco. Ele não é parecer jurídico, certificação de
+conformidade nem substituto para threat modeling, revisão técnica ou assessoria legal.
 
-O Lovable é fantástico para prototipagem, mas aplicativos gerados por IA frequentemente apresentam vulnerabilidades críticas em produção. Baseado em análises reais e best practices oficiais, este checklist lista as vulnerabilidades mais comuns e como mitigá-las.
+Fontes de referência:
 
----
-
-## As 5 Vulnerabilidades Mais Comuns em Apps Lovable
-
-### 1. Ausência de Row Level Security (RLS) — 89% dos apps
-
-**O problema:** Tabelas no Supabase sem RLS ativado. Qualquer usuário autenticado pode ler, editar ou deletar dados de todos os outros. Vulnerabilidade clássica de BOLA (Broken Object Level Authorization) — OWASP Top 10.
-
-**Mitigação:** RLS ativado em TODAS as tabelas. Políticas explícitas: `auth.uid() = user_id`.
-
----
-
-### 2. Uso da Service Role Key no Frontend — 34% dos apps
-
-**O problema:** A `SERVICE_ROLE_KEY` é a "chave mestra" que ignora RLS. Se inicializada no React, fica exposta no DevTools.
-
-**Mitigação:** NUNCA service_role_key no cliente. Use `anon key` apenas. Lógica sensível e secrets em Edge Functions (backend isolado).
+- Lovable security best practices:
+  https://docs.lovable.dev/tips-tricks/security-best-practices
+- Lovable Security view:
+  https://docs.lovable.dev/features/security-view
+- Supabase Row Level Security:
+  https://supabase.com/docs/guides/database/postgres/row-level-security
+- OWASP Top 10:2025:
+  https://owasp.org/Top10/2025/
+- LGPD:
+  https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm
+- ANPD Resolução 15/2024 e canal oficial de comunicação:
+  https://www.gov.br/anpd/pt-br/canais_atendimento/agente-de-tratamento/comunicado-de-incidente-de-seguranca-cis
+- ANPD Resolução 2/2022:
+  https://www.gov.br/anpd/pt-br/acesso-a-informacao/institucional/atos-normativos/regulamentacoes_anpd/resolucao-cd-anpd-no-2-de-27-de-janeiro-de-2022
 
 ---
 
-### 3. Consulta Direta à Tabela `auth.users` — 28% dos apps
+## 1. Perfil interno de risco
 
-**O problema:** IA tenta consultar `auth.users` diretamente, expondo hashes de senha e tokens de confirmação.
+Use estes perfis apenas para dimensionar engenharia. Eles não são “níveis LGPD”.
 
-**Mitigação:** Crie tabela `profiles` pública sincronizada via triggers. Nunca consulte `auth.users` do frontend.
+### S0 — Frontend sem coleta
 
----
+Conteúdo público, sem login, banco, formulário ou tracking não essencial.
 
-### 4. Segredos em Variáveis `VITE_` ou `NEXT_PUBLIC_` — 22% dos apps
+### S1 — Coleta limitada
 
-**O problema:** Chaves de API (Stripe, OpenAI) em prefixos públicos. Ficam embutidas no JavaScript enviado ao navegador.
+Formulário, analytics, preferências ou dados pessoais comuns em baixo volume.
 
-**Mitigação:** NUNCA armazene secrets no frontend. Use Edge Functions para qualquer integração com APIs de terceiros.
+### S2 — Conta, multi-tenant ou transação
 
----
+Auth, dados persistentes por usuário/organização, integrações, pagamento ou operações
+que alteram estado relevante.
 
-### 5. Falta de Validação de Input — 18% dos apps
+### S3 — Alto impacto
 
-**O problema:** Dados de formulários vão direto para o Supabase sem validação, abrindo margem para injeção.
+Dados sensíveis, crianças/adolescentes, saúde, biometria, finanças detalhadas, larga
+escala, decisão automatizada relevante ou operação crítica.
 
-**Mitigação:** Validação estrita em Edge Functions. Nunca confie apenas em validação do frontend.
-
----
-
-## Vulnerabilidades Emergentes em Agentic Applications — OWASP 2026
-
-**Agentic BOLA:** Prevenido com RLS obrigatório e arquitetura multi-tenant.
-
-**Prompt Injection / Leakage via Debugging:** Separação clara de responsabilidades reduz necessidade de debugar credenciais.
-
-**Insecure External Tool Usage:** Edge Functions garantem que APIs de terceiros não sejam chamadas diretamente do cliente.
+Quanto maior o perfil, mais necessária é revisão especializada, teste negativo,
+observabilidade e governança.
 
 ---
 
-## Rate Limiting e Proteção de APIs
+## 2. Threat model mínimo
 
-**O problema:** Edge Functions sem rate limiting podem ser abusadas. LLM APIs são caras.
+Antes do backend:
 
-**Mitigação:**
-- Rate limiting por usuário/IP em Edge Functions críticas
-- Cache agressivo para reduzir chamadas a APIs externas
-- Gateway de LLM (Portkey, Helicone) com roteamento e failover
-- Validação de input antes de qualquer chamada externa
-
----
-
-## Badge do Lovable e Branding
-
-**O problema:** Badge "Edit with Lovable" pode parecer não-profissional em produção.
-
-**Mitigação:**
-- Se em plano pago: remover via Project Settings do Lovable
-- Se em plano gratuito: CSS workaround — adicione ao `src/index.css`:
-  ```css
-  @layer base {
-    #lovable-badge { display: none !important; }
-  }
-  ```
+- ativos e dados que precisam de proteção;
+- atores e papéis;
+- fronteiras de confiança;
+- tenants e isolamento;
+- operações destrutivas ou financeiras;
+- integrações e secrets;
+- abuso previsível, automação e custo;
+- logging, retenção e resposta a incidente;
+- rollback e recuperação.
 
 ---
 
-## Compliance e Discoverabilidade
+## 3. Frontend é público
 
-### Google Search Console (GSC)
-
-**O problema:** Sem GSC configurado, Google não consegue indexar corretamente.
-
-**Mitigação:**
-1. Acesse search.google.com/search-console
-2. Adicione domínio e verifique via meta tag no `<head>`
-3. Submeta sitemap: Settings > Sitemaps > `[domínio]/sitemap.xml`
-4. Confirme indexabilidade via URL Inspection
-
----
-
-### LGPD — Checklist por Nível
-
-**Nível Básico** (todos os projetos):
-- [ ] Cookie consent na primeira visita
-- [ ] Política de privacidade acessível
-- [ ] Termos de uso acessíveis
-- [ ] Exportação de dados do usuário (JSON/CSV)
-- [ ] Exclusão de conta com deleção de dados
-- [ ] Audit log de ações críticas
-
-**Nível Intermediário** (dados financeiros ou menores):
-- [ ] Tudo do básico
-- [ ] Cookie consent granular: necessários / analytics / marketing
-- [ ] Página `/minha-conta/privacidade` com direitos do titular
-- [ ] Canal de contato para solicitações de dados (email/formulário)
-- [ ] Prazo de resposta: 15 dias (exigência ANPD)
-- [ ] Base legal explícita por tipo de dado na política
-- [ ] Transferência internacional declarada (Supabase, Stripe, PostHog)
-- [ ] Política de retenção de dados
-- [ ] Gate de verificação de idade
-
-**Nível Avançado** (dados sensíveis: saúde, biometria):
-- [ ] Tudo do intermediário
-- [ ] Consentimento explícito por tipo de dado sensível
-- [ ] RIPD documentado
-- [ ] DPO formalmente designado
-- [ ] Notificação de incidentes em 72h à ANPD
+- Todo código e variável entregue ao navegador pode ser inspecionado.
+- Frontend nunca decide autorização.
+- `VITE_*`, `NEXT_PUBLIC_*` ou equivalentes são públicos por definição.
+- Publishable/anon key de backend pode existir no cliente quando o modelo da plataforma
+  prevê isso, mas depende de RLS/policies corretas. Não é secret.
+- Service role, chaves privadas, webhooks secretos e credenciais de terceiros nunca vão
+  para o cliente.
+- Não registre token, email, lead ID, conteúdo sensível ou secret em console/analytics.
 
 ---
 
-## Checklist Completo de Go-Live para Produção
+## 4. Fronteira server-side
 
-**Segurança:**
-- [ ] RLS ativado em TODAS as tabelas sensíveis?
-- [ ] Código frontend inspecionado: sem `SERVICE_ROLE`, sem secrets `VITE_`?
-- [ ] APIs de terceiros (Stripe, LLM) restritas a Edge Functions?
-- [ ] Tabela `auth.users` não exposta ou consultada do frontend?
-- [ ] Rate limiting ativado nas Edge Functions críticas?
-- [ ] Validação de input em Edge Functions?
+Use server function, Edge Function ou backend equivalente para:
 
-**Branding & Produto:**
-- [ ] Badge do Lovable removido (se acordado)?
-- [ ] Tema de branding aplicado globalmente (sem cores hardcoded)?
-- [ ] Onboarding e empty states implementados?
-- [ ] Tratamento de erro com mensagens úteis?
+- secrets;
+- integrações externas autenticadas;
+- pagamentos e webhooks;
+- operações administrativas;
+- autorização e regras sensíveis;
+- rate limiting e cost controls;
+- validação confiável;
+- chamadas de IA com credenciais.
 
-**Acessibilidade:**
-- [ ] Contraste mínimo WCAG AA?
-- [ ] Todos os elementos interativos com aria-label?
-- [ ] Navegação por teclado funcional?
-
-**SEO/GEO:**
-- [ ] Google Search Console configurado?
-- [ ] Sitemap submetido ao GSC?
-- [ ] Metadata dinâmica por rota?
-- [ ] JSON-LD configurado?
-- [ ] /llms.txt e /ai-summary.md presentes?
-- [ ] Checklist SEO/GEO do Lovable passando em todos os itens?
-- [ ] Core Web Vitals dentro dos thresholds?
-
-**Compliance:**
-- [ ] LGPD checklist concluído (nível apropriado)?
-- [ ] Cookie consent granular (se nível intermediário+)?
-- [ ] Política de privacidade e termos acessíveis?
-- [ ] Canal DPO para solicitações de dados?
-- [ ] Exportação de dados funcional?
-- [ ] Exclusão de conta funcional?
-- [ ] Audit log registrando ações críticas?
-
-**Testes & Monitoramento:**
-- [ ] Testes de penetração executados (ex: Aikido Security)?
-- [ ] Falhas críticas resolvidas?
-- [ ] PostHog (analytics) configurado?
-- [ ] Sentry (error monitoring) configurado?
-- [ ] Notificações de erro habilitadas?
+“Edge Function para tudo” não é requisito. O requisito é uma fronteira server-side
+adequada à stack atual.
 
 ---
 
-## Alinhamento com Frameworks de Segurança
+## 5. Banco e RLS
 
-**OWASP Top 10:**
-- A01 - Broken Access Control: Mitigado com RLS + BOLA protection
-- A02 - Cryptographic Failures: Secrets em Edge Functions, não frontend
-- A03 - Injection: Validação estrita em Edge Functions
-- A04 - Insecure Design: Security by design no kickoff
-- A07 - Identification & Authentication: Supabase Auth + session management
-- A08 - Data Integrity: RLS policies + audit log
+Quando usar Supabase/Postgres exposto por API:
 
-**LGPD (Lei Geral de Proteção de Dados):**
-- Art. 5 — Princípios: Transparência via políticas
-- Art. 6 — Bases Legais: Explícitas no kickoff
-- Art. 9 — Direitos do Titular: Página dedicada
-- Art. 18 — Notificação: 72 horas à ANPD
+- [ ] RLS ativo em toda tabela de schema exposto;
+- [ ] deny-by-default;
+- [ ] policies explícitas por operação;
+- [ ] policies consideram tenant/workspace, não apenas usuário quando necessário;
+- [ ] testes negativos entre dois usuários e dois tenants;
+- [ ] views/functions revisadas quanto a `security definer`;
+- [ ] buckets/storage com policies;
+- [ ] operações administrativas ficam server-side;
+- [ ] índices suportam colunas usadas nas policies.
+
+Não consulte `auth.users` diretamente do frontend. Use APIs de autenticação apropriadas
+e, quando o produto precisar de dados públicos de perfil, uma tabela de domínio própria
+com exposição mínima. Não afirme que uma consulta comum ao schema `auth` automaticamente
+expõe hashes; o risco real é quebrar a fronteira privilegiada e o modelo de acesso.
 
 ---
 
-*Histórico:*
-- *v1.0 — 5 vulnerabilidades + OWASP + failover*
-- *v2.0 (2026-05-15) — Adiciona LGPD 3 níveis, GSC, rate limiting, badge do Lovable, checklist completo de go-live*
+## 6. Validação e integridade
 
+- Validação no cliente para UX.
+- Validação no servidor para confiança.
+- Constraints no banco para invariantes.
+- Schemas explícitos para requests e responses.
+- Limites de tamanho, tipo e frequência.
+- Uploads validados por tipo, tamanho, nome e autorização.
+- Queries parametrizadas e APIs que não concatenam input em comandos.
+- Idempotência em webhooks e operações repetíveis.
+- Tratamento seguro de exceções sem vazar stack, secret ou PII.
+
+---
+
+## 7. Auth, sessão e papéis
+
+- [ ] método de login compatível com risco;
+- [ ] reset e recuperação seguros;
+- [ ] sessão, expiração e logout testados;
+- [ ] roles não vêm de campo editável pelo próprio usuário;
+- [ ] rota escondida não conta como autorização;
+- [ ] admin separado e auditável;
+- [ ] ações críticas pedem reautenticação quando necessário;
+- [ ] MFA considerado para contas privilegiadas;
+- [ ] OAuth redirect URLs restritas aos ambientes corretos.
+
+---
+
+## 8. Integrações, rate limit e supply chain
+
+- menor escopo de permissão possível;
+- chaves separadas por ambiente;
+- timeout, retry e circuit breaker proporcionais;
+- rate limit por usuário/tenant/IP quando útil;
+- quotas e alertas para APIs cobradas;
+- webhooks autenticados e idempotentes;
+- dependências pinadas por lockfile;
+- Security view atualizado;
+- CVEs críticas resolvidas ou justificadas;
+- conectores removidos quando não usados.
+
+---
+
+## 9. Recursos de IA e agentes
+
+Quando houver LLM, tools ou ações:
+
+- trate prompt, página, arquivo e output do modelo como input não confiável;
+- limite ferramentas, escopo e autonomia;
+- valide output antes de executar ou persistir;
+- exija confirmação para ação externa, financeira, destrutiva ou irreversível;
+- proteja contra exfiltração de contexto, secrets e dados de outros tenants;
+- aplique orçamento, rate limit e tamanho máximo;
+- registre decisões sem armazenar conteúdo sensível desnecessário;
+- tenha fallback quando provedor/modelo falhar.
+
+Gateway de LLM é opção arquitetural, não obrigação automática.
+
+---
+
+## 10. Privacidade e LGPD
+
+### Inventário
+
+- finalidade e necessidade de cada dado;
+- papel de controlador/operador;
+- base legal validada;
+- retenção e exclusão;
+- compartilhamento e transferência internacional;
+- canal do titular;
+- consentimento separado de termos quando essa for a base;
+- cookies/analytics carregados somente conforme a decisão de consentimento aplicável.
+
+### Direitos do titular
+
+O prazo de até 15 dias do art. 19 refere-se à declaração clara e completa de confirmação
+de existência/acesso. Não generalize esse prazo para todos os direitos do art. 18.
+
+### Incidentes
+
+Pelo art. 48 da LGPD e pela Resolução CD/ANPD nº 15/2024, o controlador comunica ANPD e
+titulares em até **3 dias úteis** quando o incidente confirmado com dados pessoais puder
+acarretar risco ou dano relevante. Nem toda vulnerabilidade ou incidente técnico exige
+comunicação. O registro de incidentes com dados pessoais deve ser mantido por pelo menos
+cinco anos, conforme o regulamento.
+
+### Encarregado
+
+Não presuma “DPO formal obrigatório” para todo projeto. A indicação depende do papel e
+do enquadramento do agente. A Resolução CD/ANPD nº 2/2022 dispensa certos agentes de
+pequeno porte, mas exige canal de comunicação com titulares e não elimina as demais
+obrigações.
+
+Para S3, obtenha revisão jurídica/privacidade especializada e avalie RIPD.
+
+---
+
+## 11. Testes e observabilidade
+
+- [ ] unit/component tests para regras;
+- [ ] teste de integração para backend;
+- [ ] browser testing para fluxo visível;
+- [ ] testes de autorização negativos;
+- [ ] teste de webhook/idempotência;
+- [ ] scan de dependência e secret;
+- [ ] logs sem PII/secrets;
+- [ ] alertas para falhas críticas e abuso;
+- [ ] backup/restore quando houver dados;
+- [ ] plano de incidente e responsável;
+- [ ] resultados do Security view estão atuais, não stale.
+
+Ferramenta comercial de pentest é opcional. Para S2/S3 ou exposição relevante, considere
+revisão independente proporcional ao risco.
+
+---
+
+## 12. Go-live
+
+### Todos os projetos
+
+- [ ] nenhum secret no cliente/repositório;
+- [ ] dependências e build verificados;
+- [ ] domínio, ambiente e rollback confirmados;
+- [ ] conteúdo jurídico corresponde ao tratamento real;
+- [ ] dados de teste removidos ou isolados;
+- [ ] publish explicitamente aprovado.
+
+### Com backend/dados
+
+- [ ] RLS/autorização testadas;
+- [ ] migrations revisadas;
+- [ ] backup/restore;
+- [ ] rate limits;
+- [ ] retenção/exclusão;
+- [ ] canais de suporte e incidente.
+
+### Com pagamento ou ação externa
+
+- [ ] ambiente test/live conferido;
+- [ ] webhook e idempotência;
+- [ ] nenhum teste aciona cobrança real sem autorização;
+- [ ] reconciliação e logs.
+
+### Com IA
+
+- [ ] tools mínimas;
+- [ ] output validation;
+- [ ] confirmação humana para alto impacto;
+- [ ] custo e abuso controlados;
+- [ ] fallback.
+
+---
+
+## Mapeamento orientativo
+
+Use OWASP Top 10:2025 como documento de conscientização, não como selo. Os temas mais
+relevantes incluem controle de acesso, configuração insegura, supply chain, criptografia,
+injeção, design inseguro, autenticação, integridade, logging/alertas e tratamento de
+condições excepcionais.

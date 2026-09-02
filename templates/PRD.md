@@ -1,42 +1,80 @@
 # Product Requirements Document
 
-**Projeto:** [Nome]
-**Data:** [Data]
-**Versão:** 1.0
+**Projeto:**
+**Data:**
+**Versão:**
+**Modo:** Product/App | Internal Tool | Hybrid
+**Status:** draft | approved
 
-## Problema
+## Fonte e autoridade
 
-[Qual problema o produto resolve? Para quem?]
+| Assunto | Fonte | Classificação |
+|---|---|---|
+| | | verificado / decisão / alegação / inferência |
 
-## Usuário principal
+## Problema e resultado
 
-[Quem vai usar? Nível técnico? Contexto de uso?]
+- Problema:
+- Usuário:
+- Contexto de uso:
+- Resultado/valor principal:
 
-## Solução proposta
+## Solução
 
-[O que o produto faz em 2-3 frases]
+[Descrição curta do comportamento, sem jargão promocional.]
 
-## Funcionalidades do MVP (em ordem de prioridade)
+## Escopo prioritário
 
-1. **[Feature 1]:** [comportamento esperado]
-2. **[Feature 2]:** [comportamento esperado]
-3. **[Feature 3]:** [comportamento esperado]
+1. **Feature:** comportamento, regras e critério de aceite
+2.
+3.
 
-## Fora do escopo (MVP)
+## Fora do escopo
 
-- [Item 1 que fica pra depois]
-- [Item 2 que fica pra depois]
+-
 
-## Diferenciais competitivos
+## Fluxo para o valor
 
-- vs [Concorrente 1]: [diferencial]
-- vs [Concorrente 2]: [diferencial]
+- Ponto de entrada:
+- Momento de valor:
+- Retorno/recorrência:
 
-## Modelo de negócio
+## Arquitetura
 
-[Gratuito / Freemium / Assinatura — detalhes]
+- Frontend:
+- Backend necessário? por quê?
+- Auth:
+- Persistência:
+- Integrações:
+- Multi-tenant:
+- Offline/PWA:
+- Idiomas:
 
-## Critérios de sucesso do MVP
+## Dados, privacidade e segurança
 
-- [ ] [Critério 1 mensurável]
-- [ ] [Critério 2 mensurável]
+- Dados pessoais/sensíveis:
+- Papéis e fronteira de acesso:
+- Retenção:
+- Processadores externos:
+- Riscos principais:
+
+## Acessibilidade
+
+- Público:
+- Target:
+- Requisitos específicos:
+
+## Métricas e evidência
+
+- Métrica de produto:
+- Evidência de funcionamento:
+- Analytics necessário agora?:
+
+## Critérios de sucesso
+
+- [ ]
+- [ ]
+
+## Riscos, suposições e decisões abertas
+
+-

@@ -1,134 +1,124 @@
-# Archetypes — Escolhendo a Plataforma Certa
+# Arquétipos de Projeto — Classifique Antes de Escolher a Arquitetura
 
-Use este guia quando o usuário não souber qual ferramenta de vibe coding usar,
-ou quando houver dúvida sobre qual arquétipo seu produto pertence.
-
----
-
-## Os 4 Arquétipos
-
-### Arquétipo 1 — Web Full-Stack
-**Plataformas:** Lovable, bolt.new, emergent.sh
-
-Escolha quando o produto é um **app web completo**: SaaS, ferramenta interna,
-dashboard, marketplace, portal de clientes. Precisa de backend, banco de dados,
-autenticação e deploy. (O emergent.sh também faz mobile no mesmo projeto — ver abaixo.)
-
-| Critério | Lovable | bolt.new | emergent.sh |
-|---|---|---|---|
-| Fluxo de geração | 4 fases interativas guiadas | Brief único estruturado | Multi-agente autônomo por fases |
-| Ambiente | Cloud (servidores deles) | WebContainer (no browser) | Cloud multi-agente |
-| Banco padrão | Supabase | Supabase | MongoDB |
-| Branding | Sessão de branding embutida | Figma import ou tokens | Especificação explícita (visual é fraco) |
-| Código exportável | Sim | Sim | Sim (GitHub, VS Code) |
-| Mobile | Não | Não | Sim (Expo/React Native) |
-| Melhor para | Ser guiado passo a passo | Controle do brief | Full-stack + mobile, time de agentes |
-
-**Use Lovable se:** é seu primeiro app ou prefere um fluxo mais interativo e guiado.
-**Use bolt.new se:** tem clareza do que quer construir e prefere especificar tudo num brief.
-**Use emergent.sh se:** quer full-stack com backend robusto, ou web + mobile no mesmo
-projeto, e prefere delegar a um time de agentes autônomos. Atenção ao consumo de créditos.
+Este guia classifica o trabalho antes da plataforma e da stack. Capacidades comerciais
+de builders mudam rápido; verifique documentação oficial atual antes de recomendar uma
+ferramenta com base em preço, exportação, backend ou recursos específicos.
 
 ---
 
-### Arquétipo 2 — UI-First / Componentes
-**Plataforma:** v0 by Vercel
+## 1. Experience / Marketing Site
 
-Escolha quando o objetivo é **gerar componentes React ou páginas de UI** de alta
-qualidade para integrar num projeto existente — não construir um app do zero.
+Landing page, site institucional, portfólio, campanha, lançamento ou experiência de
+marca.
 
-Sinais de que o v0 é a escolha certa:
-- "Preciso de um componente de X para meu projeto Next.js"
-- "Quero gerar uma tela/página de Y em React"
-- "Tenho um design system e preciso de componentes consistentes"
-- "Sou desenvolvedor e quero acelerar a parte de UI"
+Sinais:
 
-**Não escolha v0 se:** quer um app completo com backend. O v0 gera UI; você traz o resto.
+- conversão e compreensão são o valor principal;
+- narrativa, direção de arte ou interação importam;
+- pode ser frontend-only;
+- conteúdo, prova, performance e acessibilidade têm mais peso que schema de banco.
 
----
-
-### Arquétipo 3 — Mobile Nativo
-**Plataformas:** a0.dev (mobile puro), emergent.sh (mobile + full-stack)
-
-Escolha quando o produto é um **app para iOS e/ou Android** que será publicado
-na App Store e/ou Google Play.
-
-Sinais de que a0.dev é a escolha certa:
-- "Quero publicar na App Store"
-- "Precisa de notificações push no celular"
-- "O usuário vai usar câmera, GPS ou outros recursos do device"
-- "Precisa funcionar offline no celular"
-- "Quero só o app mobile, indie, rápido, sem camada web"
-
-**a0.dev vs emergent.sh para mobile:**
-- **a0.dev:** mobile puro, indie, rápido, focado em store. Sem camada full-stack pesada.
-- **emergent.sh:** quando o app mobile precisa de backend robusto, ou quando você quer
-  web + mobile no mesmo produto. Os dois usam Expo/React Native.
-
-**Não escolha a0.dev se:** quer um site ou app web — a0.dev é mobile only.
+No Lovable, use Design Guidance quando a direção estiver aberta, depois
+`references/experience-sites.md`.
 
 ---
 
-### Arquétipo 4 — App Builder Integrado
-**Plataforma:** Base44
+## 2. Product / App Web
 
-Escolha quando quer construir **rápido, sem se preocupar com código** — especialmente
-para ferramentas internas, dashboards e protótipos de validação.
+SaaS, portal, dashboard, marketplace ou produto com lógica persistente.
 
-Sinais de que Base44 é a escolha certa:
-- "Preciso de uma ferramenta interna para minha equipe"
-- "Quero validar a ideia antes de contratar um desenvolvedor"
-- "Não preciso do código — só que funcione"
-- "Quero integrar com Slack, Stripe ou Google Drive sem codar"
+Sinais:
 
-**Atenção antes de escolher Base44:** você não terá o código-fonte. Se o produto
-precisar escalar ou migrar de plataforma no futuro, terá que reescrever do zero.
-Leia o aviso de lock-in em `references/platform-base44.md` antes de começar.
+- usuário retorna e mantém estado;
+- há dados, autenticação, papéis ou integrações;
+- regras de negócio precisam de teste;
+- segurança e operação continuam após o lançamento.
 
-**Base44 vs emergent.sh:** os dois constroem apps full-stack rápido. A diferença
-decisiva é o código: o Base44 retém o código (lock-in), o emergent dá o código via
-GitHub. Se portabilidade importa, emergent; se só quer que funcione rápido e não liga
-para o código, Base44.
+No Lovable, escolha backend somente após definir necessidade e governança.
 
 ---
 
-## Árvore de Decisão Rápida
+## 3. Ferramenta Interna / Protótipo
 
+Fluxo para equipe restrita ou validação rápida.
+
+Sinais:
+
+- público controlado;
+- menor necessidade de SEO;
+- velocidade importa, mas dados reais ainda exigem segurança;
+- pode começar com mock e frontend-only.
+
+Acessibilidade pode ter opt-out explícito apenas se for realmente interno e isolado.
+
+---
+
+## 4. Component / UI
+
+Componente, seção ou página para integrar em projeto existente.
+
+Sinais:
+
+- escopo local;
+- design system e stack já existem;
+- contrato de props/dados importa;
+- não deve reinventar produto ou backend.
+
+---
+
+## 5. Existing Project / Repair
+
+Projeto já iniciado, publicado ou com dívida.
+
+Sinais:
+
+- há comportamento a preservar;
+- o problema pode ser drift de contexto, regressão ou arquitetura;
+- recomeçar é mais arriscado que auditar;
+- branch, backup e rollback são parte do escopo.
+
+---
+
+## 6. Mobile Nativo
+
+Aplicativo iOS/Android com APIs e distribuição nativas.
+
+Lovable é orientado a web responsiva/PWA. Quando o requisito for binário nativo, App
+Store/Play, APIs nativas profundas ou experiência offline nativa, verifique e escolha
+uma ferramenta mobile apropriada. Não descreva responsive web como app nativo.
+
+---
+
+## Perguntas de seleção
+
+1. O resultado roda em navegador ou precisa ser binário nativo?
+2. O valor é conteúdo/conversão, operação persistente ou componente isolado?
+3. Precisa de backend, auth, storage, realtime ou pagamentos agora?
+4. Quem precisa possuir e revisar o código?
+5. Há restrição de framework, hospedagem, dados ou compliance?
+6. Qual nível de direção visual e interação é necessário?
+7. A ferramenta possui preview, versionamento, testes e rollback adequados?
+8. O custo/lock-in foi verificado na documentação atual?
+
+---
+
+## Árvore rápida
+
+```text
+Qual é o resultado principal?
+
+├── Landing, portfólio, campanha, site de marca
+│   └── Experience / Marketing Site
+├── SaaS, dashboard, portal, marketplace
+│   └── Product / App Web
+├── Ferramenta restrita ou validação
+│   └── Ferramenta Interna / Protótipo
+├── Componente ou página em projeto existente
+│   └── Component / UI
+├── Projeto já construído com problema
+│   └── Existing Project / Repair
+└── Binário iOS/Android e APIs nativas
+    └── Mobile Nativo
 ```
-O que você quer construir?
 
-├── Componente ou página React para projeto existente
-│   └── → v0 (Vercel)
-
-├── App mobile (iOS/Android, App Store/Play)
-│   ├── Só mobile, indie, rápido
-│   │   └── → a0.dev
-│   └── Mobile + backend robusto, ou web + mobile juntos
-│       └── → emergent.sh
-
-├── App web completo (SaaS, dashboard, ferramenta)
-│   ├── Não preciso do código, só que funcione rápido
-│   │   └── → Base44 (protótipo / ferramenta interna)
-│   ├── Quero ser guiado passo a passo
-│   │   └── → Lovable
-│   ├── Quero escrever o brief eu mesmo, controle total
-│   │   └── → bolt.new
-│   └── Quero backend robusto / time de agentes / web + mobile
-│       └── → emergent.sh
-```
-
----
-
-## Combinações Comuns
-
-**SaaS web + landing page:** Lovable ou bolt.new para o app; v0 para componentes
-específicos de UI que precisam ser perfeitos.
-
-**Protótipo para validar → produto real:** Base44 para o protótipo rápido;
-Lovable, bolt.new ou emergent.sh para o produto final (quando a ideia foi validada).
-
-**App mobile + web admin:** a0.dev para o app mobile + Lovable/bolt.new para o painel;
-ou emergent.sh sozinho, cobrindo web + mobile no mesmo projeto.
-
-**Produto full-stack com backend complexo:** emergent.sh, pelo time multi-agente e
-backend MongoDB integrado, com código portável via GitHub.
+A escolha de arquétipo determina os artefatos e gates. Ela não obriga uma plataforma.
