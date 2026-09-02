@@ -1,286 +1,222 @@
-# Framework de Prompting para Lovable.dev — v2.0
+# Framework Operacional de Prompting para Lovable — v3.0
 
-*Autor: André Almeida*
+Este é um guia rápido. O comportamento canônico está em:
 
-Este documento consolida as melhores práticas e padrões de prompting para o Lovable.dev, baseado na documentação oficial, comunidade e descobertas da skill `lovable-prompt-builder`. Ele descreve como estruturar requisitos, fazer iterações com feedback do Lovable e entregar produtos em produção.
+- `references/vibecode-core.md`
+- `references/platform-lovable.md`
+- `references/experience-sites.md`
+- `security-checklist.md`
 
----
-
-## 1. Princípios Fundamentais
-
-**Atomicidade (Build by component):** Nunca peça para construir tudo de uma vez. Comece pelo layout, depois componentes individuais. O Lovable quebra com escopo demais.
-
-**Separação de preocupações (UI vs Data):** UI é forte. Dados e segurança precisam de direção explícita. Defina schema, RLS e integrações externas no kickoff.
-
-**Contexto é rei:** A IA precisa saber O QUE está construindo, PARA QUEM e POR QUÊ. Contexto de negócio e restrições são fundamentais.
-
-**Branding desde o início:** Cores, fontes e tom visual devem ser tokens Tailwind definidos globalmente no primeiro prompt. Nunca hardcoded.
-
-**Security by design:** RLS, Edge Functions, sem secrets no frontend — não são passos finais, são requisitos de cada componente.
-
-**Feedback loop obrigatório:** Cada prompt entregue depende do sucesso do anterior. Sem exceções.
+Não duplique decisões permanentes em todos os prompts.
 
 ---
 
-## 2. O Fluxo em 4 Fases
+## 1. Os quatro artefatos
 
-### FASE 1 — Escopo, Badge, LGPD e Concorrentes
+### Project Knowledge
 
-Pergunte:
-1. Público-alvo? (consumidor / B2B / interno)
-2. Monetização?
-3. Offline ou PWA?
-4. Múltiplos idiomas?
-5. Multi-tenant (B2B)?
-6. Badge do Lovable — remover?
-7. Usuários menores de 18?
-8. Dados sensíveis?
-9. Serviços de terceiros fora do Brasil?
+Guarda propósito, termos, stack, regras de marca, segurança, acessibilidade e release.
+É persistente.
 
-Output: Nível de compliance LGPD definido (Básico / Intermediário / Avançado).
+### Plano
 
-### FASE 2 — Branding
+Produzido em Plan mode. Investiga e organiza a sequência sem alterar código.
 
-Pergunte:
-- Tem identidade visual existente?
-- URLs de inspiração (até 3)?
-- Tom visual (minimalista / bold / corporativo / lúdico)?
-- Dark mode?
-- Referências negativas?
+### Prompt atômico
 
-Output: Bloco completo de tokens Tailwind, tipografia, radius, dark mode, componentes shadcn.
+Executado em Agent mode. Muda uma responsabilidade e declara o que preservar.
 
-```
-CONFIGURAÇÃO DE TEMA — [Projeto]
+### Verificação
 
-Cores (tokens Tailwind):
-  primary:     #[hex]
-  secondary:   #[hex]
-  accent:      #[hex]
-  background:  #[hex]
-  foreground:  #[hex]
-  muted:       #[hex]
-  border:      #[hex]
-  destructive: #[hex]
+Mensagem posterior que escolhe build/test/browser/backend conforme o comportamento.
 
-Tipografia:
-  font-sans:    [família]
-  font-display: [família]
-
-Border radius:
-  --radius: [valor]rem
-
-Dark mode: [sim / não / toggle]
-
-Componentes shadcn: [lista]
-
-Tom visual: [descrição]
-```
-
-### FASE 3 — Validação
-
-Apresente resumo:
-- O que faz, quem usa
-- Top 5 features do MVP
-- Pensamento lateral (PLG, retenção)
-- Backlog imediato
-- Diferenciais competitivos
-- Nível LGPD
-- Branding resumido
-
-Aguarde confirmação EXPLÍCITA.
-
-### FASE 4 — Execução Iterativa
-
-Entregue prompts UM POR UM. Para cada um:
-
-```
-Próximo passo: Cole este prompt no Lovable e retorne o resultado.
-- "OK / funcionou" — avanço
-- Texto do erro — analiso e corrijo
-- "Funcionou mas errado" — ajusto
-```
-
-Após cada retorno:
-- **Sucesso:** Próximo prompt
-- **Erro:** Prompt de correção com diagnóstico
-- **Parcial:** Anota ou corrige agora?
-
-Último prompt: Google Search Console setup.
+Misturar os quatro em um “kickoff prompt” gigante aumenta drift e mudanças parciais.
 
 ---
 
-## 3. Estrutura Ideal do Kickoff
+## 2. Ordem
 
+```text
+fontes → modo → especificação → Project Knowledge → Plan mode
+→ revisão do plano → Design Guidance quando aplicável → Agent mode atômico
+→ verificação → próximo passo → release
 ```
-# [Nome] — Lovable Kickoff Prompt
 
-*Autor: André Almeida*
+Para site experiencial:
 
-## Context
-[Produto, problema, usuário, conexões de negócio]
+```text
+tese → Experience Spec → limite do primeiro build → três direções
+→ escolha humana → protótipo estático → interação assinatura isolada
+→ integração → conteúdo de decisão → QA → release
+```
 
-## Competitive Edge
-[2-3 diferenciais concretos]
 
-## Tech Stack
-React + TypeScript + Tailwind + shadcn/ui
-Supabase (Auth, Database, Storage, Edge Functions)
-PostHog (Analytics)
-Sentry (Error Monitoring)
-Resend (Email)
-[Stripe — se monetização]
+### Atenção ao Design Guidance
 
-## Branding & Visual Identity
-[Bloco completo de tokens Tailwind gerado na Fase 2]
+Os três previews aparecem antes do build, mas submeter uma direção inicia a construção.
+Defina antes o limite do primeiro build. Para experiência ambiciosa, comece pelo shell e
+hero estáticos; não autorize Canvas/WebGL, som, backend e tracking nessa mesma rodada.
 
-## Core Features — Priority Order
-1. **[Feature 1]:** [comportamento esperado]
-2. **[Feature 2]:** [comportamento esperado]
-...
+---
 
-## Onboarding & Empty States
-[Fluxo de primeiro acesso, ações sugeridas]
+## 3. Anatomia do prompt atômico
 
-## SEO, GEO & Discoverabilidade
+Use `templates/ATOMIC_PROMPT.md`.
 
-### SEO
-- HTML semântico (h1 único, landmark roles)
-- Metadata dinâmica por rota
-- Open Graph + Twitter Cards
-- Sitemap.xml automático
-- robots.txt com regras explícitas
-- Imagens com lazy loading e alt text
-- Core Web Vitals: LCP < 2.5s / CLS < 0.1 / INP < 200ms
-- Dynamic OG images por rota
+Um bom prompt responde:
 
-### GEO — Generative Engine Optimization
-- /public/llms.txt (descrição para AI crawlers)
-- /public/ai-summary.md (resumo estruturado do produto)
-- Meta description 150-300 chars, otimizada para AI
-- JSON-LD / Schema.org: WebSite + WebPage + específico por tipo
-- HTML que converte bem para markdown
-- /blog, /changelog, /docs indexáveis
+- qual é o último estado verificado;
+- qual única mudança deve acontecer;
+- o que deve permanecer igual;
+- quais estados/edge cases importam;
+- como saber que terminou;
+- o que não pode ser publicado ou acionado.
 
-### Checklist Auditoria SEO/GEO (Lovable nativo)
-Todos devem passar antes de encerrar:
-- [ ] Homepage heading and structure
-- [ ] Google Search Console configurado
-- [ ] Crawler rules (robots.txt)
-- [ ] Sitemap submetido ao GSC
-- [ ] AI summary (/ai-summary.md + meta description)
-- [ ] Core Web Vitals OK
-- [ ] Schema para rich results
-- [ ] Page metadata por rota
-- [ ] Social previews (Open Graph)
-- [ ] Acessibilidade (WCAG AA)
-- [ ] Mobile-friendly
-- [ ] Indexabilidade confirmada
+Evite adjetivos vagos como “bonito”, “premium” ou “moderno” sem composição, referência
+e critérios observáveis.
 
-## Technical Requirements & Database Architecture
+---
 
-### Banco de Dados
-[Tabelas com campos, tipos e relações]
+## 4. Stack proporcional
 
-### Segurança (sem exceção)
-- RLS em TODAS as tabelas
-- Políticas RLS explícitas: SELECT, INSERT, UPDATE, DELETE
-- Proteção contra BOLA — OWASP
-- NUNCA service_role_key no cliente
-- NUNCA secrets em variáveis VITE_
-- SEMPRE Edge Functions para integrações externas
-- Rate limiting nas Edge Functions críticas
-- Gateway de LLM (ex: Portkey) para failover
+Nunca inclua automaticamente:
 
-### Compliance LGPD — Nível [Básico / Intermediário / Avançado]
+- Supabase;
+- auth;
+- PostHog;
+- Sentry;
+- Resend;
+- Stripe;
+- gateway de LLM;
+- painel admin;
+- `llms.txt`;
+- `ai-summary.md`.
 
-**Básico:**
-Cookie consent, política, termos, exportação de dados, exclusão de conta, audit log
+Cada item precisa de necessidade, ambiente, responsável, custo e critério de sucesso.
 
-**Intermediário:**
-Tudo + cookie consent granular, página de direitos do titular, canal DPO com prazo 15 dias, base legal por tipo de dado, transferência internacional, retenção de dados, gate de idade
+Frontend-first com mock é um caminho válido. Banco entra quando persistência real for
+necessária.
 
-**Avançado:**
-Tudo + RIPD, consentimento específico por dado sensível, notificação de incidentes 72h, DPO designado
+---
 
-## Monetização [se aplicável]
-- Stripe com webhooks via Edge Function
-- Página de pricing com planos diferenciados
-- Upgrade wall nos recursos premium
-- Portal do cliente para gerenciar assinatura
+## 5. Prompt de Plan mode
 
-## Notificações & Comunicação
-- In-app com preferências por usuário
-- Email transacional via Resend
-- [Push via PWA — se definido]
+```text
+MODO: Plan. Não altere código.
 
-## Admin Panel
-- Rota /admin protegida por role admin no RLS
-- Visão de usuários, métricas, gestão de conteúdo
+Analise [objetivo] usando o Project Knowledge e o estado atual.
+Preserve [áreas].
+Não adicione [stack/features/efeitos proibidos].
 
-## Implementation Strategy
-1. Fluxo de autenticação completo
-2. Layout base com branding aplicado globalmente
-3. [Feature 1 do core]
-...
-N-2. LGPD: cookie consent, políticas, página de direitos
-N-1. SEO/GEO: metadata, JSON-LD, sitemap, llms.txt, ai-summary.md
-N.   Analytics (PostHog) + Error Monitoring (Sentry)
-[Se badge]: CSS para ocultar #lovable-badge
+Entregue:
+1. diagnóstico;
+2. decisões e trade-offs;
+3. arquivos afetados;
+4. sequência atômica;
+5. testes;
+6. rollback;
+7. perguntas somente se forem bloqueantes.
 
-## Safe-Guard Instructions
-- NÃO construa tudo de uma vez
-- NÃO use service_role_key no cliente
-- NÃO use secrets em variáveis VITE_
-- NÃO crie tabelas sem RLS ativado
-- NÃO ignore empty states e error states
-- NÃO avance sem o passo anterior funcionando
-- NÃO use cores hardcoded — sempre tokens Tailwind
-- NÃO aplique branding de forma parcial
+Não implemente nem publique.
 ```
 
 ---
 
-## 4. Workflow de Produção
+## 6. Prompt de Agent mode
 
-Lovable é excelente para prototipagem (70% do trabalho em 10% do tempo). Para produção:
+```text
+MODO: Agent. Não publique.
 
-1. **Lovable:** Construir UI, lógica básica, validar ideia
-2. **GitHub:** Exportar código, controle de versão
-3. **Cursor + MCP:** Refinar código, robustez, otimizar integrações (30% final)
-4. **Google Search Console:** Configurar após deploy em produção
+ESTADO
+[último estado verificado]
 
----
+TASK ÚNICA
+[uma mudança]
 
-## 5. Comandos Essenciais
+PRESERVE
+[lista]
 
-**Clarificação:** "Antes de codar, faça 3 perguntas sobre [feature]: estrutura de dados, fluxo do usuário, edge cases."
+CRITÉRIOS
+- [resultado observável]
+- [estado/edge case]
+- [mobile/a11y/performance quando aplicável]
 
-**Mock vs Schema:** "Crie a UI com dados mockados. Simultaneamente, defina o SQL exato do Supabase com tipos, RLS policies e foreign keys."
-
-**Restrição de Escopo:** "Aja como fundador solo com orçamento zero. Sem soluções enterprise complexas."
-
-**Teste ELI5:** "Explique esse fluxo como para um adolescente novo em SaaS. Se for difícil, simplifique antes de codar."
-
----
-
-## 6. Checklist Pré-Deploy
-
-- [ ] RLS ativado em todas as tabelas sensíveis
-- [ ] Frontend inspecionado: sem SERVICE_ROLE, sem secrets VITE_
-- [ ] APIs de terceiros só via Edge Functions
-- [ ] Tabela auth.users não exposta no frontend
-- [ ] Acessibilidade WCAG AA
-- [ ] Testes de penetração executados (ex: Aikido Security)
-- [ ] LGPD checklist concluído (nível apropriado)
-- [ ] Badge do Lovable removido (se acordado)
-- [ ] Google Search Console configurado
-- [ ] Checklist SEO/GEO do Lovable passando em todos os itens
-- [ ] Rate limiting nas Edge Functions críticas
+Ao terminar, liste arquivos alterados e como verificar.
+```
 
 ---
 
-*Histórico:*
-- *v1.0 — Princípios e estrutura de prompt*
-- *v2.0 (2026-05-15) — 4 fases, branding, GEO, LGPD, feedback loop, checklist SEO/GEO do Lovable*
+## 7. Prompt de verificação
 
+```text
+Verifique apenas a task recém-concluída.
+
+Escolha o teste adequado e informe evidências:
+- build/typecheck/lint;
+- frontend test;
+- browser testing;
+- backend/edge test;
+- security scan.
+
+Cheque console/rede quando aplicável.
+Não publique, não envie dados reais e não corrija silenciosamente outro escopo.
+```
+
+---
+
+## 8. Tratamento de retorno
+
+### Sucesso
+
+Registre critério atendido e prossiga para a próxima unidade.
+
+### Erro
+
+```text
+EVIDÊNCIA
+[o que falhou]
+
+CAUSA PROVÁVEL
+[hipótese sustentada]
+
+CORREÇÃO MÍNIMA
+[prompt atômico]
+
+REGRESSÃO A EVITAR
+[o que preservar]
+```
+
+### Parcial
+
+Não chame de pronto. Liste pendência, impacto e decisão: corrigir agora ou backlog
+explícito.
+
+---
+
+## 9. Reancoragem
+
+Quando houver drift:
+
+- atualize Project Knowledge;
+- confira o plano aprovado;
+- referencie os arquivos relevantes;
+- diga a divergência observada;
+- peça correção mínima.
+
+Não use reancoragem para reenviar o projeto inteiro em todo prompt.
+
+---
+
+## 10. Release
+
+Preview e publish são etapas distintas. Antes do publish:
+
+- versão candidata vista por humano;
+- testes frescos;
+- segurança/privacidade proporcionais;
+- conteúdo factual revisado;
+- rollback;
+- autorização explícita.
+
+Configurar Search Console, analytics, domínio, checkout ou email é trabalho separado do
+deploy.

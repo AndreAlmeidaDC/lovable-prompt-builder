@@ -1,38 +1,52 @@
 # Data Model
 
-**Projeto:** [Nome]
-**Plataforma:** [Lovable / bolt.new / Base44 / a0.dev]
+> Use somente quando o projeto realmente tiver dados persistentes.
 
-## Entidades / Tabelas
+**Projeto:**
+**Backend:** Lovable Cloud | Supabase | External
+**Tenant boundary:** none | user | workspace | organization
 
-### [Entidade 1]
-| Campo | Tipo | Descrição |
-|---|---|---|
-| id | uuid | Identificador único |
-| [campo] | [tipo] | [descrição] |
-| created_at | timestamp | Data de criação |
+## Classificação dos dados
 
-### [Entidade 2]
-| Campo | Tipo | Descrição |
-|---|---|---|
-| id | uuid | Identificador único |
-| [entidade1]_id | uuid | FK para Entidade 1 |
-| [campo] | [tipo] | [descrição] |
+| Dado | Pessoal? | Sensível? | Fonte | Base/propósito | Retenção |
+|---|---|---|---|---|---|
+| | | | | | |
+
+## Entidades / tabelas
+
+### [Entidade]
+
+| Campo | Tipo | Nulo? | Regra/constraint | Índice | Descrição |
+|---|---|---|---|---|---|
+| id | uuid | não | primary key | sim | |
+| created_at | timestamptz | não | default now() | | |
 
 ## Relações
 
-- [Entidade 1] → [Entidade 2]: [1:N / N:N / 1:1]
+-
 
-## Papéis e Permissões
+## Regras de integridade
 
-| Role | Entidade 1 | Entidade 2 |
-|---|---|---|
-| admin | CRUD | CRUD |
-| user | R | CR |
-| viewer | R | R |
+- constraints:
+- unicidade:
+- cascatas:
+- idempotência:
+- concorrência:
 
-## Notas de segurança
+## Papéis e permissões
 
-- [RLS ativado em todas as tabelas — Lovable/Bolt]
-- [Permissões configuradas via plataforma — Base44]
-- [Convex/Supabase policies — a0.dev]
+| Role | Recurso | SELECT | INSERT | UPDATE | DELETE |
+|---|---|---|---|---|---|
+| | | | | | |
+
+## RLS / autorização
+
+- Schemas expostos:
+- Estratégia deny-by-default:
+- Policies:
+- Testes negativos entre usuários/tenants:
+- Operações exclusivamente server-side:
+
+## Retenção e exclusão
+
+-

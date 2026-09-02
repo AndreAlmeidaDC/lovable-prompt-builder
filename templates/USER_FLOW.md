@@ -1,49 +1,57 @@
 # User Flow
 
-**Projeto:** [Nome]
-**Plataforma:** [Lovable / bolt.new / Base44 / a0.dev]
+**Projeto:**
+**Modo:** Product/App | Experience/Marketing | Existing Project/Repair
 
-## Fluxo principal (happy path)
+## Objetivo do fluxo
 
-```
+- Entrada:
+- Valor principal:
+- Ação final:
+- Condição de sucesso:
+
+## Happy path
+
+```text
 [Ponto de entrada]
-      |
-      v
-[Passo 1]
-      |
-      v
-[Passo 2]
-      |
-      v
-[Valor entregue ao usuário]
+      ↓
+[Orientação / primeiro passo]
+      ↓
+[Ação principal]
+      ↓
+[Feedback / evidência]
+      ↓
+[Valor ou conversão]
 ```
 
-## Telas / Páginas principais
+## Páginas, telas ou cenas
 
-| Tela / Página | Propósito | Ações disponíveis |
-|---|---|---|
-| [Nome] | [O que o usuário faz aqui] | [Ações] |
+| Área | Propósito | Ação | Informação | Próximo passo |
+|---|---|---|---|---|
+| | | | | |
 
-## Estrutura de navegação (mobile — a0.dev)
+## Estados
 
-```
-Bottom Tab Navigator:
-  - [Tab 1] (Stack)
-    - [Screen 1a]
-    - [Screen 1b]
-  - [Tab 2] (Stack)
-    - [Screen 2a]
+| Situação | Comportamento | Mensagem | Recuperação |
+|---|---|---|---|
+| Loading | | | |
+| Vazio | | | |
+| Erro | | | |
+| Sem permissão | | | |
+| Offline/rede lenta | | | |
+| Sucesso | | | |
 
-Auth Stack (fora do tab):
-  - LoginScreen
-  - SignupScreen
-```
+## Acessibilidade e dispositivos
 
-## Estados de exceção
+- Teclado:
+- Foco:
+- Mobile:
+- Reduced motion:
+- Fallback:
+- Leitor de tela:
 
-| Situação | O que acontece |
-|---|---|
-| Usuário não autenticado | Redireciona para Login |
-| Dados não encontrados | Empty state com CTA |
-| Erro de rede | Mensagem de erro + retry |
-| Carregando | Skeleton / spinner |
+## Efeitos externos
+
+| Ação | Dados reais? | Serviço externo? | Confirmação necessária? |
+|---|---|---|---|
+| | | | |
